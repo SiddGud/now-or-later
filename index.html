@@ -8,55 +8,70 @@
 <meta property="og:title" content="5 winners: up to ₹1,250 + Amazon vouchers | 7-min decision game">
 <meta property="og:description" content="Make a few quick choices, get your personal report card, and enter the draw. Neuroeconomics course project, IIIT Hyderabad.">
 <style>
-:root{--bg:#f4f2ff;--card:#fff;--ink:#1d1b2e;--muted:#6b6880;--pri:#5b4cf0;--pri2:#8a7dff;--ok:#16a36a;--line:#e4e1f5}
+:root{--bg:#f3f1fb;--card:#fff;--ink:#17152b;--muted:#636079;--pri:#5440e8;--pri2:#8b7cff;--soft:#f1eeff;--ok:#16a36a;--line:#e3e0f2;--line2:#d4cff0;--shadow:0 1px 2px rgba(40,30,110,.06),0 10px 30px rgba(60,40,160,.09)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);overscroll-behavior-y:none}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);background-image:radial-gradient(120% 60% at 50% -10%,#e4defe 0%,rgba(228,222,254,0) 60%);background-attachment:fixed;color:var(--ink);overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
 button{font-family:inherit;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 button:focus-visible,.chip:focus-visible{outline:3px solid var(--pri2);outline-offset:2px}
-.wrap{max-width:520px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) 16px max(32px,env(safe-area-inset-bottom));min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
-.top{display:flex;align-items:center;gap:10px;margin-bottom:14px;height:20px;flex:none}
+.wrap{max-width:480px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom));min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:12px;margin:6px 2px 16px;height:20px;flex:none}
 #app{flex:1}
-.bar{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
-.fill{height:100%;width:0;background:linear-gradient(90deg,var(--pri),var(--pri2));transition:width .4s ease}
-.pct{font-size:12px;color:var(--muted);min-width:34px;text-align:right}
-.card{background:var(--card);border-radius:18px;padding:24px 18px;box-shadow:0 6px 24px rgba(60,40,160,.08);animation:in .28s ease-out both}
-@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.swap{animation:fade .22s ease-out both}
-@keyframes fade{from{opacity:.25}to{opacity:1}}
+.bar{flex:1;height:6px;background:rgba(84,64,232,.12);border-radius:99px;overflow:hidden}
+.fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--pri),var(--pri2));transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.pct{font-size:12px;font-weight:600;color:var(--muted);min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.card{background:var(--card);border-radius:22px;padding:26px 20px 22px;box-shadow:var(--shadow);animation:in .3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.swap{animation:fade .24s ease-out both}
+@keyframes fade{from{opacity:.2;transform:translateY(3px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.card,.swap{animation:none}.fill{transition:none}}
-h1{font-size:23px;margin:0 0 10px;line-height:1.25}
-h2{font-size:19px;margin:0 0 10px;line-height:1.4}
-p{color:var(--muted);line-height:1.5;margin:6px 0 12px}
-.tag{display:inline-block;font-size:12px;font-weight:600;color:var(--pri);background:#ecebff;padding:4px 10px;border-radius:99px;margin-bottom:10px}
-.opt{display:block;width:100%;min-height:58px;text-align:left;border:2px solid var(--line);background:#fff;border-radius:14px;padding:16px;margin:10px 0;font-size:16px;font-weight:600;line-height:1.35;color:var(--ink);cursor:pointer;transition:transform .08s,border-color .15s,background .15s}
+h1{font-size:26px;margin:2px 0 10px;line-height:1.2;letter-spacing:-.02em}
+h2{font-size:20px;margin:0 0 12px;line-height:1.38;letter-spacing:-.01em}
+p{color:var(--muted);line-height:1.55;margin:6px 0 14px;font-size:15px}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--pri);background:var(--soft);padding:5px 11px;border-radius:99px;margin-bottom:12px}
+.opt{position:relative;display:flex;align-items:center;width:100%;min-height:64px;text-align:left;border:1.5px solid var(--line2);background:#fff;border-radius:16px;padding:16px 56px 16px 18px;margin:0;font-size:16.5px;font-weight:600;line-height:1.35;color:var(--ink);cursor:pointer;box-shadow:0 1px 2px rgba(40,30,110,.05);transition:transform .1s,border-color .15s,background .15s,box-shadow .15s}
+.opt::after{content:"";position:absolute;right:18px;top:50%;width:22px;height:22px;margin-top:-11px;border-radius:50%;border:2px solid var(--line2);background:#fff;box-sizing:border-box;transition:border-color .15s,box-shadow .15s,background .15s}
 .opt:active{transform:scale(.985)}
-.opt.sel{border-color:var(--pri);background:#f1efff}
+.opt.sel{border-color:var(--pri);background:var(--soft);box-shadow:0 0 0 3px rgba(84,64,232,.12)}
+.opt.sel::after{border-color:var(--pri);background:var(--pri);box-shadow:inset 0 0 0 4px #fff}
+@media (hover:hover){.opt:hover{border-color:var(--pri2)}}
+.card > .opt + .opt{margin-top:12px}
+.card > h2 + .opt,.card > p + .opt{margin-top:4px}
 .opt small{display:block;font-weight:400;color:var(--muted);margin-top:3px}
-.vs{text-align:center;color:var(--muted);font-size:13px;margin:-2px 0;line-height:16px}
-.btn{width:100%;min-height:52px;border:0;border-radius:14px;padding:15px;font-size:16px;font-weight:700;background:var(--pri);color:#fff;margin-top:16px;cursor:pointer;transition:background .15s,transform .08s}
+#pair{margin-top:4px}
+.vs{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:10px 4px;line-height:16px}
+.vs::before,.vs::after{content:"";flex:1;height:1px;background:var(--line)}
+.btn{width:100%;min-height:54px;border:0;border-radius:16px;padding:15px;font-size:16px;font-weight:700;background:var(--pri);background-image:linear-gradient(180deg,#6450f2,#5440e8);color:#fff;margin-top:18px;cursor:pointer;box-shadow:0 6px 16px rgba(84,64,232,.28);transition:background .15s,transform .1s,box-shadow .15s}
 .btn:active{transform:scale(.985)}
-.btn:disabled{background:#c9c5ea;cursor:default;transform:none}
-.btn.ghost{background:transparent;color:var(--muted);font-weight:500}
-.q{margin:20px 0 8px;font-weight:600;font-size:15px;line-height:1.4}
+.btn:disabled{background:#cfcaee;background-image:none;box-shadow:none;cursor:default;transform:none}
+.btn.ghost{background:transparent;background-image:none;box-shadow:none;color:var(--muted);font-weight:600;margin-top:6px}
+.q{margin:22px 0 10px;font-weight:650;font-size:15px;line-height:1.4}
+.tag + .q{margin-top:6px}
 .row{display:flex;flex-wrap:wrap;gap:8px}
-.chip{min-height:44px;border:2px solid var(--line);background:#fff;border-radius:99px;padding:10px 14px;font-size:14px;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s}
-.chip.sel{border-color:var(--pri);background:#f1efff;color:var(--pri)}
+.chip{min-height:44px;border:1.5px solid var(--line2);background:#fff;border-radius:12px;padding:10px 14px;font-size:14.5px;font-weight:500;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s,color .15s,box-shadow .15s}
+.chip.sel{border-color:var(--pri);background:var(--soft);color:var(--pri);font-weight:650;box-shadow:0 0 0 3px rgba(84,64,232,.1)}
 .scale{display:flex;flex-wrap:nowrap;gap:8px}
-.scale .chip{flex:1;text-align:center;padding:10px 0;min-height:48px;font-size:16px}
-.ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
-input[type=number],input[type=text],textarea{width:100%;border:2px solid var(--line);border-radius:12px;padding:13px;font-size:16px;font-family:inherit}
-input:focus,textarea:focus{outline:none;border-color:var(--pri)}
-textarea{resize:none;line-height:1.4}
-.err{color:#c0392b;font-size:13px;min-height:18px;margin-top:6px;line-height:18px}
-.prize{background:#fff8e6;border:1px solid #ffe2a3;border-radius:14px;padding:12px 14px;margin:12px 0;color:#7a5200;font-size:14px;line-height:1.5}
-.stat{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:12px 0}
-.stat b{font-size:15px}
-.big{font-size:44px;font-weight:800;color:var(--pri);margin:4px 0}
-.meter{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0 4px}
-.meter div{height:100%;background:linear-gradient(90deg,#ff8a65,#ffd54f,#16a36a)}
-.insight{background:#f6f5ff;border-radius:12px;padding:12px;margin:10px 0;font-size:14px;line-height:1.5}
-.small{font-size:12px;color:var(--muted)}
+.scale .chip{flex:1;text-align:center;padding:0;min-height:52px;font-size:17px;font-weight:650;font-variant-numeric:tabular-nums}
+.ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px}
+input[type=number],input[type=text],textarea{width:100%;border:1.5px solid var(--line2);border-radius:14px;padding:15px 16px;font-size:17px;font-family:inherit;color:var(--ink);background:#fbfaff;transition:border-color .15s,box-shadow .15s,background .15s;-moz-appearance:textfield;appearance:none}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input::placeholder,textarea::placeholder{color:#a6a2bd}
+input:focus,textarea:focus{outline:none;border-color:var(--pri);background:#fff;box-shadow:0 0 0 4px rgba(84,64,232,.12)}
+textarea{resize:none;line-height:1.45}
+.err{color:#c0392b;font-size:13px;min-height:18px;margin-top:8px;line-height:18px}
+.prize{background:linear-gradient(180deg,#fff9ea,#fff4d8);border:1px solid #f6dfa6;border-radius:16px;padding:14px 16px;margin:14px 0;color:#6e4a00;font-size:14.5px;line-height:1.6}
+.stat{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:14px 2px;font-size:14.5px;color:var(--muted)}
+.stat b{font-size:16px;color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+.ring{width:150px;height:150px;margin:14px auto 12px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.ring > div{width:124px;height:124px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.big{font-size:46px;font-weight:800;color:var(--ink);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.big span{font-size:15px;font-weight:600;color:var(--muted);letter-spacing:0}
+.label{display:inline-block;font-weight:700;font-size:15px;color:var(--pri);background:var(--soft);padding:5px 14px;border-radius:99px}
+.meter{height:8px;background:rgba(84,64,232,.12);border-radius:99px;overflow:hidden;margin:18px 0 4px}
+.meter div{height:100%;border-radius:99px;background:linear-gradient(90deg,#ff8a65,#ffd54f,#16a36a)}
+.insight{background:#f7f6ff;border:1px solid #ece9fb;border-radius:14px;padding:13px 14px;margin:10px 0;font-size:14.5px;line-height:1.55;color:#3a3752}
+.insight b{color:var(--ink)}
+.small{font-size:12.5px;color:var(--muted);line-height:1.5}
 .center{text-align:center}
 </style>
 </head>
@@ -682,7 +697,9 @@ function report() {
   else if (score < 30) { label = 'Lives in the now'; }
 
   var html = '<div class="card"><span class="tag">Your report card</span><h1>Thanks for playing!</h1>' +
-    '<div class="center"><div class="small">Your patience score</div><div class="big">' + score + '<span style="font-size:20px">/100</span></div><b>' + label + '</b>' +
+    '<div class="center"><div class="small">Your patience score</div>' +
+    '<div class="ring" style="background:conic-gradient(var(--pri) ' + score + '%, rgba(84,64,232,.12) 0)"><div><div class="big">' + score + '<span>/100</span></div></div></div>' +
+    '<span class="label">' + label + '</span>' +
     '<div class="meter"><div style="width:' + score + '%"></div></div><div class="ends"><span>Now-focused</span><span>Future-focused</span></div></div>';
   for (var i = 0; i < ins.length; i++) { html += '<div class="insight">' + ins[i] + '</div>'; }
   html += '<div class="stat"><span>Waiting a month for ₹500 needs at least</span><b>' + rs(gA.ind) + '</b></div>' +

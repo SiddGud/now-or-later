@@ -70,7 +70,8 @@ async function playOnce(browser, base, mode, hash) {
   var pcts = [];
   var doubleTapped = false;
   var guard = 0;
-  while (!posted && guard < 300) {
+  // About 60 taps, each waiting out a 180 ms transition: leave plenty of headroom on a slow machine
+  while (!posted && guard < 2000) {
     guard += 1;
     await page.waitForTimeout(30);
     var st = await page.evaluate(function () {
@@ -142,9 +143,18 @@ async function playOnce(browser, base, mode, hash) {
       await page.click('#go');
     }
   }
-  if (posted) { await page.waitForSelector('#share'); }
+  var stuckAt = '';
+  if (posted) {
+    await page.waitForSelector('#share');
+  } else {
+    // Record where a play got stuck, to tell app bugs from driver timeouts
+    stuckAt = await page.evaluate(function () {
+      var s = steps[idx] || {};
+      return 'idx ' + idx + '/' + steps.length + ' type ' + s.type + ' id ' + s.id + ' busy ' + busy + ' html ' + app.innerHTML.slice(0, 120);
+    });
+  }
   await ctx.close();
-  return { posted: posted, errors: errors, truth: truth, pcts: pcts, mode: mode };
+  return { posted: posted, errors: errors, truth: truth, pcts: pcts, mode: mode, stuckAt: stuckAt, guard: guard };
 }
 
 // Replays one task's taps with the bisection rule from PROJECT_CONTEXT.md
@@ -166,7 +176,7 @@ function replay(taskId, taps) {
 function checkRun(r, problems) {
   var d = r.posted;
   var tag = '[' + (d && d.id) + ' ' + r.mode + '] ';
-  if (!d) { problems.push(tag + 'no POST captured'); return; }
+  if (!d) { problems.push(tag + 'no POST captured after ' + r.guard + ' loops; stuck at ' + r.stuckAt + '; errors: ' + r.errors.join(' | ')); return; }
   if (r.errors.length) { problems.push(tag + 'console errors: ' + r.errors.join(' | ')); }
   for (var i = 0; i < REQUIRED.length; i++) {
     if (!(REQUIRED[i] in d)) { problems.push(tag + 'missing field ' + REQUIRED[i]); }
