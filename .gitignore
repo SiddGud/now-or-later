@@ -1,0 +1,6 @@
+node_modules/
+# Sheet exports contain UPI IDs: never commit them
+*.csv
+*.xlsx
+analysis/out/
+__pycache__/

@@ -1,0 +1,12 @@
+{
+  "name": "now-or-later",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Now or Later? Neuroeconomics survey app (IIIT Hyderabad, Team 6)",
+  "scripts": {
+    "test": "node tests/playthrough.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  }
+}
