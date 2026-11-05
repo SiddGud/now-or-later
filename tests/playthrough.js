@@ -41,7 +41,8 @@ function startServer() {
     var file = path.join(ROOT, url);
     if (!fs.existsSync(file)) { res.writeHead(404); res.end(); return; }
     var body = fs.readFileSync(file, 'utf8');
-    if (url === '/index.html') { body = body.replace("'PASTE_YOUR_WEB_APP_URL_HERE'", "'" + FAKE_ENDPOINT + "'"); }
+    // Swap whatever ENDPOINT is set for the fake one, so tests never write to the real Sheet
+    if (url === '/index.html') { body = body.replace(/var ENDPOINT = '[^']*';/, "var ENDPOINT = '" + FAKE_ENDPOINT + "';"); }
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(body);
   });
