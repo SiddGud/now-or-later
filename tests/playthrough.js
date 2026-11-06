@@ -13,7 +13,7 @@ var ROOT = path.join(__dirname, '..');
 var REQUIRED = [
   'id', 'order', 'nudgeGroup', 'anchorGroup', 'startedAt', 'consent', 'age', 'describes', 'spending',
   'priorKnowledge', 'otherSurvey', 'stress', 'trust', 'flipNear', 'flipNear_rt',
-  'attn1', 'attn2', 'anchorYes', 'anchorAmount', 'flipFar', 'procrast', 'regret', 'comment',
+  'attn1', 'attn2', 'version', 'anchorYes', 'anchorAmount', 'flipFar', 'procrast', 'regret', 'comment',
   'p1', 'p2', 'p3', 'p4', 'p5', 'p1_rt', 'p2_rt', 'p3_rt', 'p4_rt', 'p5_rt', 'upi',
   'type1Score', 'correctScore', 'flipped', 'attentionFail', 'finishedAt', 'totalSec', 'device', 'trialsJSON'
 ];
@@ -25,7 +25,7 @@ for (var ti = 0; ti < TASKS.length; ti++) {
 
 // Range of each task, mirroring PROJECT_CONTEXT.md
 function spec(taskId) {
-  if (taskId.indexOf('health') !== -1) { return { V: 20, lo: 20, hi: 50, step: 1 }; }
+  if (taskId.indexOf('health') !== -1) { return { V: 20, lo: 20, hi: 80, step: 1 }; }
   if (taskId === 'nudge') { return { V: 2000, lo: 2000, hi: 5000, step: 10 }; }
   return { V: 500, lo: 500, hi: 1250, step: 5 };
 }
@@ -186,7 +186,7 @@ function checkRun(r, problems) {
     var id = TASKS[t];
     var sp = spec(id);
     var mine = taps.filter(function (x) { return x.step === id; });
-    if (mine.length !== 5) { problems.push(tag + id + ' has ' + mine.length + ' taps, expected 5'); continue; }
+    if (mine.length !== 6) { problems.push(tag + id + ' has ' + mine.length + ' taps, expected 6'); continue; }
     var seen = {};
     for (var m = 0; m < mine.length; m++) {
       // Interval before this tap; when it is one step wide no new interior offer exists (health only)
@@ -208,8 +208,8 @@ function checkRun(r, problems) {
     if (Math.abs(k - (ind / sp.V - 1) / 30) > 1e-4) { problems.push(tag + id + ' k does not match ind'); }
     if (['no', 'high', 'low'].indexOf(d[id + '_censored']) === -1) { problems.push(tag + id + ' bad censored ' + d[id + '_censored']); }
     if (r.mode === 'consistent') {
-      // Five halvings of the range plus rounding: the estimate must land near the true switch point
-      var tolerance = (sp.hi - sp.lo) / 32 + sp.step;
+      // Six halvings of the range plus rounding: the estimate must land near the true switch point
+      var tolerance = (sp.hi - sp.lo) / 64 + sp.step;
       if (Math.abs(ind - r.truth[id]) > tolerance) { problems.push(tag + id + ' ind ' + ind + ' far from true ' + r.truth[id].toFixed(1)); }
       var allSooner = mine.every(function (x) { return x.choice === 'sooner'; });
       var allLater = mine.every(function (x) { return x.choice === 'later'; });

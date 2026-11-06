@@ -71,3 +71,10 @@ id, order, nudgeGroup, anchorGroup, startedAt, test, consent, age, describes, sp
 - Regression: log k ~ context + frame + type1Score + trust + stress + spending + priorKnowledge + otherSurvey + order.
 - Main figures: discount curve per context, inconsistency heatmap (context x framing/anchor/Type 1), beta-delta per context.
 - Exclusions: attentionFail = yes, totalSec < 120, priorKnowledge/otherSurvey as sensitivity checks.
+
+## Version 2 (from 6 November 2026)
+Every response now has a `version` column (85 fields). Rows without it are v1.
+- 6 bisection steps per task instead of 5 (finer switch points).
+- Health task range 20 to 80 days (was 20 to 50), because about a quarter of v1 respondents hit the top.
+- Second attention check reworded to an explicit instruction: 'Quick check: to show you are reading, tap "₹100 in 30 days".' The options are unchanged. In v1, 21% failed the old wording.
+- Unchanged: all other wording, money ranges, delays, the k formula, groups and the report card. k is on the same scale in v1 and v2, so they can be pooled with version as a covariate, or analysed separately: `py analysis/analyze.py responses.csv v2`.

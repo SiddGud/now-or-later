@@ -83,7 +83,7 @@ var DRAW_DATE = '14 November 2026';
 // ==========================================
 
 // Number of adaptive questions per task
-var TRIALS = 5;
+var TRIALS = 6;
 
 // One random ID per respondent
 var RID = Math.random().toString(36).slice(2, 10);
@@ -101,6 +101,8 @@ var data = { id: RID, order: ORDER, nudgeGroup: NUDGE, anchorGroup: ANCHOR, star
 // Marks test plays (#test) so they can be filtered out of the Sheet
 var TEST_MODE = location.hash === '#test';
 data.test = 'no';
+// Version of the questions: v2 has 6 steps per task, health up to 80 days and a new second check
+data.version = 'v2';
 if (TEST_MODE) { data.test = 'yes'; }
 // Optional answer, kept as an empty column when skipped
 data.spending = '';
@@ -132,7 +134,7 @@ function roundTo(x, step) { return Math.round(x / step) * step; }
 // Builds one adaptive task definition
 function task(ctx, frame) {
   var t = { type: 'adaptive', ctx: ctx, frame: frame, id: frame + '_' + ctx };
-  if (ctx === 'health') { t.V = 20; t.lo = 20; t.hi = 50; t.step = 1; }
+  if (ctx === 'health') { t.V = 20; t.lo = 20; t.hi = 80; t.step = 1; }
   else if (ctx === 'nudge') { t.V = 2000; t.lo = 2000; t.hi = 5000; t.step = 10; t.id = 'nudge'; }
   else { t.V = 500; t.lo = 500; t.hi = 1250; t.step = 5; }
   return t;
@@ -149,7 +151,7 @@ function block(frame) {
   if (frame === 'A') {
     list.splice(2, 0, choice('attn1', 'Quick check: which would you rather get?', ['₹1000 today', '₹10 in 60 days']));
   } else {
-    list.splice(2, 0, choice('attn2', 'Quick check: which fine would you rather pay?', ['₹100 in 30 days', '₹5000 in 60 days']));
+    list.splice(2, 0, choice('attn2', 'Quick check: to show you are reading, tap "₹100 in 30 days".', ['₹100 in 30 days', '₹5000 in 60 days']));
   }
   return list;
 }
@@ -185,7 +187,7 @@ function buildSteps() {
 
 var steps = buildSteps();
 
-// Progress units: adaptive tasks count as 5
+// Progress units: adaptive tasks count as TRIALS
 var totalUnits = 0;
 for (var i = 0; i < steps.length; i++) {
   if (steps[i].type === 'adaptive') { totalUnits += TRIALS; } else { totalUnits += 1; }
@@ -380,7 +382,7 @@ function labels(t, L) {
   return out;
 }
 
-// Runs one adaptive task: 5 questions that home in on the switch point
+// Runs one adaptive task: TRIALS questions that home in on the switch point
 function startAdaptive(t) {
   var lo = t.lo;
   var hi = t.hi;
@@ -449,7 +451,7 @@ function startAdaptive(t) {
     // Censored when the switch point is pinned at an end of the range.
     // 'high': pinned at the top, true k is at least this value (gain: never chose later; loss: always postponed).
     // 'low': pinned at the bottom (gain: always chose later; loss: always paid now).
-    var tol = (t.hi - t.lo) / 16;
+    var tol = (t.hi - t.lo) / Math.pow(2, TRIALS - 1);
     var censored = 'no';
     if (hi === t.hi && lo >= t.hi - tol) { censored = 'high'; }
     if (lo === t.lo && hi <= t.lo + tol) { censored = 'low'; }

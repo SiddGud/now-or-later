@@ -1,7 +1,10 @@
 """Planned analysis for "Now or Later?" (PROJECT_CONTEXT.md, section "Planned analysis").
 
 Usage:
-    py analysis/analyze.py path/to/responses.csv
+    py analysis/analyze.py path/to/responses.csv [v1|v2|all]
+
+The optional last argument keeps only one question version (default: all).
+v1 = the first version (5 steps per task, health up to 50 days); v2 = 6 steps, health up to 80 days.
 
 Reads the CSV exported from the Google Sheet ("responses" tab: File -> Download -> CSV)
 and writes every table, test result and figure to analysis/out/.
@@ -25,6 +28,8 @@ OUT = os.path.join(HERE, "out")
 CONTEXTS = ["gain", "loss", "health", "friend"]
 FRAMES = ["A", "B"]
 # Sooner amount V for each context (health in days)
+# Which question version to analyse; set from the command line
+KEEP = "all"
 V = {"gain": 500, "loss": 500, "health": 20, "friend": 500}
 # Validated categorical slots 1-4 (dataviz reference palette), fixed per context
 COLORS = {"gain": "#2a78d6", "loss": "#eb6834", "health": "#1baf7a", "friend": "#eda100"}
@@ -99,6 +104,14 @@ def load(path):
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
     df["spending"] = df["spending"].fillna("").replace("", "Not given")
+    # Rows from before the version column existed are v1
+    if "version" not in df.columns:
+        df["version"] = "v1"
+    df["version"] = df["version"].fillna("v1").replace("", "v1")
+    say("Versions: %s" % df["version"].value_counts().to_dict())
+    if KEEP != "all":
+        df = df[df["version"] == KEEP]
+        say("Keeping only %s: %d rows" % (KEEP, len(df)))
     df["flipped_yes"] = (df["flipped"] == "yes").astype(int)
     return df.reset_index(drop=True)
 
@@ -246,6 +259,8 @@ def taps_long(df):
             taps = json.loads(r["trialsJSON"])
         except (TypeError, ValueError):
             continue
+        # Position of each tap within its own task; 0 = first question, which also includes reading time
+        pos = {}
         for t in taps:
             step = t.get("step", "")
             if "offer" not in t:
@@ -256,8 +271,11 @@ def taps_long(df):
                 frame = "nudge"
                 ctx = "nudge"
             ind = r.get(step + "_ind")
+            n = pos.get(step, 0)
+            pos[step] = n + 1
             rows.append({"id": r["id"], "step": step, "frame": frame, "ctx": ctx, "offer": t["offer"],
-                         "choice": t["choice"], "rt": t["rt"], "ind": ind})
+                         "choice": t["choice"], "rt": t["rt"], "ind": ind,
+                         "version": r.get("version", "v1"), "pos": n})
     return pd.DataFrame(rows)
 
 
@@ -275,7 +293,11 @@ def h7(df):
     w2 = stats.wilcoxon(ff["flipNear_rt"], ff["flipFar_rt"])
     say("Classic pair RT: near %.0f ms vs far %.0f ms; Wilcoxon p=%.5f" % (ff["flipNear_rt"].median(), ff["flipFar_rt"].median(), w2.pvalue))
     # Distance of each offer from the person's own switch point, as a share of the task range
+    # The first question of each task includes reading the new question, so it is left out here
+    ab = ab[ab["pos"] > 0]
     span = ab["ctx"].map({"gain": 750, "loss": 750, "friend": 750, "health": 30})
+    # Health runs to 80 days in v2
+    span = span.where(~((ab["ctx"] == "health") & (ab["version"] == "v2")), 60)
     ab = ab.assign(dist=(ab["offer"] - ab["ind"]).abs() / span, logrt=np.log(ab["rt"]))
     ab = ab.dropna(subset=["dist"])
     rhos = []
@@ -471,6 +493,11 @@ def main():
         print(__doc__)
         sys.exit(1)
     os.makedirs(OUT, exist_ok=True)
+    global KEEP
+    # Rupee signs must print on any console
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    if len(sys.argv) > 2:
+        KEEP = sys.argv[2]
     raw = load(sys.argv[1])
     df, sens = exclusions(raw)
     if len(df) < 5:
