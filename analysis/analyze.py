@@ -116,21 +116,65 @@ def load(path):
     return df.reset_index(drop=True)
 
 
+def careless_flags(df):
+    """Counts warning signs of careless answering, one point each (0 to 5).
+
+    1. Total time under 5 minutes (median is about 8).
+    2. Median time per money question under 0.8 s (median is about 1.6 s).
+    3. More than 25% of money questions answered in under 0.4 s.
+    4. 7 or more of the 9 money tasks answered all on one side.
+    5. Failed both attention checks.
+    """
+    flags = []
+    for _, r in df.iterrows():
+        try:
+            taps = [t for t in json.loads(r["trialsJSON"]) if "offer" in t]
+        except (TypeError, ValueError):
+            taps = []
+        n = 0
+        if r["totalSec"] < 300:
+            n += 1
+        if taps:
+            rts = np.array([t["rt"] for t in taps])
+            if np.median(rts) < 800:
+                n += 1
+            if np.mean(rts < 400) > 0.25:
+                n += 1
+            tasks = {}
+            for t in taps:
+                tasks.setdefault(t["step"], set()).add(t["choice"])
+            one_sided = 0
+            for v in tasks.values():
+                if len(v) == 1:
+                    one_sided += 1
+            if one_sided >= 7:
+                n += 1
+        if r["attn1"] == "₹10 in 60 days" and r["attn2"] == "₹5000 in 60 days":
+            n += 1
+        flags.append(n)
+    return pd.Series(flags, index=df.index)
+
+
 def exclusions(df):
     say("\n== Exclusions ==")
     n0 = len(df)
-    df = df[df["consent"] == "yes"]
+    df = df[df["consent"] == "yes"].copy()
     say("No consent: %d" % (n0 - len(df)))
-    n1 = len(df)
-    df = df[df["attentionFail"] != "yes"]
-    say("attentionFail = yes: %d" % (n1 - len(df)))
-    n2 = len(df)
-    df = df[df["totalSec"] >= 120]
-    say("totalSec < 120: %d" % (n2 - len(df)))
+    # Main rule: drop a response only when it shows 3 or more signs of careless answering.
+    # A failed attention check alone is not enough, because the v1 wording of check 2 caught careful people too.
+    df["carelessFlags"] = careless_flags(df)
+    careless = df[df["carelessFlags"] >= 3]
+    say("Careless (3+ of 5 warning signs): %d, of whom %d failed an attention check and %d passed both"
+        % (len(careless), int((careless["attentionFail"] == "yes").sum()), int((careless["attentionFail"] != "yes").sum())))
+    say("  ids: %s" % ", ".join(careless["id"].astype(str)))
+    df = df[df["carelessFlags"] < 3]
+    say("Kept despite failing an attention check: %d" % int((df["attentionFail"] == "yes").sum()))
     say("Main sample: %d" % len(df))
+    strict = df[df["attentionFail"] != "yes"]
+    say("Strict sample (also drops every attention-check fail): %d" % len(strict))
     sens = df[(df["priorKnowledge"] != "Yes, in detail") & (df["otherSurvey"] != "Yes")]
-    say("Sensitivity sample (also drops prior knowledge 'Yes, in detail' and otherSurvey 'Yes'): %d" % len(sens))
-    return df.reset_index(drop=True), sens.reset_index(drop=True)
+    say("Sensitivity sample (drops prior knowledge 'Yes, in detail' and otherSurvey 'Yes'): %d" % len(sens))
+    return df.reset_index(drop=True), sens.reset_index(drop=True), strict.reset_index(drop=True)
 
 
 # ---------------------------------------------------------------- hypotheses
@@ -499,7 +543,7 @@ def main():
     if len(sys.argv) > 2:
         KEEP = sys.argv[2]
     raw = load(sys.argv[1])
-    df, sens = exclusions(raw)
+    df, sens, strict = exclusions(raw)
     if len(df) < 5:
         say("Too few responses after exclusions to analyse.")
         sys.exit(1)
@@ -520,6 +564,12 @@ def main():
     if len(sens) >= 5:
         h1(sens, "sensitivity").to_csv(os.path.join(OUT, "h1_wilcoxon_sensitivity.csv"), index=False)
         h2(sens).to_csv(os.path.join(OUT, "h2_pairwise_sensitivity.csv"), index=False)
+    if len(strict) >= 5:
+        say("\n== Strict check (H1, H2, H4, H5 without any attention-check fails) ==")
+        h1(strict, "strict").to_csv(os.path.join(OUT, "h1_wilcoxon_strict.csv"), index=False)
+        h2(strict).to_csv(os.path.join(OUT, "h2_pairwise_strict.csv"), index=False)
+        h4(strict)
+        h5(strict)
     else:
         say("Skipped: fewer than 5 respondents.")
     with open(os.path.join(OUT, "report.txt"), "w", encoding="utf-8") as fh:
