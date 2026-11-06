@@ -501,6 +501,40 @@ def fig_heatmap(df):
     pd.DataFrame(mat, index=CONTEXTS, columns=[g[0] for g in groups]).to_csv(os.path.join(OUT, "fig2_heatmap_values.csv"))
 
 
+def inconsistency_map(df):
+    """Share of people who are present-biased, future-biased or consistent, per context.
+
+    Compares the switch point with "today" (block A) and without it (block B), same 30-day wait.
+    Present-biased: A is higher than B by more than two final bisection intervals (needs more to wait
+    when today is an option; for fines, accepts a bigger later fine to avoid paying today).
+    Future-biased: the reverse. Consistent: within that tolerance.
+    """
+    say("\n== Inconsistency map (time inconsistency per context, block A vs block B) ==")
+    rows = []
+    # Inconsistent in at least one context
+    any_inc = pd.Series(False, index=df.index)
+    for c in CONTEXTS:
+        span = 750
+        if c == "health":
+            span = 30
+        tol = pd.Series(span / 16.0, index=df.index)
+        if c == "health":
+            # v2 and later run health from 20 to 80 days, with 6 steps
+            tol = tol.where(df["version"] == "v1", 60 / 32.0)
+        diff = df["A_%s_ind" % c] - df["B_%s_ind" % c]
+        ok = diff.notna()
+        any_inc = any_inc | (diff.abs() > tol)
+        pb = (diff[ok] > tol[ok]).mean()
+        fb = (diff[ok] < -tol[ok]).mean()
+        rows.append({"context": c, "n": int(ok.sum()), "present_biased_pct": round(100 * pb, 1),
+                     "future_biased_pct": round(100 * fb, 1), "consistent_pct": round(100 * (1 - pb - fb), 1),
+                     "inconsistent_pct": round(100 * (pb + fb), 1)})
+    t = pd.DataFrame(rows)
+    say(t.to_string(index=False))
+    say("Inconsistent in at least one context: %.0f%%" % (100 * any_inc.mean()))
+    return t
+
+
 def beta_delta(df):
     # Quasi-hyperbolic model: block B gives delta^30 = V/ind_B; block A gives beta*delta^30 = V/ind_A
     rows = []
@@ -578,6 +612,7 @@ def main():
     h1(df, "main sample").to_csv(os.path.join(OUT, "h1_wilcoxon.csv"), index=False)
     h2(df).to_csv(os.path.join(OUT, "h2_pairwise.csv"), index=False)
     h3(df)
+    inconsistency_map(df).to_csv(os.path.join(OUT, "inconsistency_map.csv"), index=False)
     h4(df)
     h5(df)
     h6(df)
