@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fafaf9">
+<title>Now or Later? | 3-min decision game</title>
+<meta property="og:title" content="5 winners: up to ₹1,250 + Amazon vouchers | 3-min decision game">
+<meta property="og:description" content="Make a few quick choices, get your personal report card, and enter the draw. Neuroeconomics course project, IIIT Hyderabad.">
+<style>
+:root{--bg:#fafaf9;--card:#fff;--ink:#1c1b1a;--muted:#6b6862;--line:#e4e2de;--line2:#cfccc6;--sel:#f2f1ee;--acc:#1c1b1a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background-color:var(--bg);background-image:radial-gradient(#d9d6d0 1px,transparent 1.2px);background-size:18px 18px;background-attachment:fixed;color:var(--ink);overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+button:focus-visible,.chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.wrap{max-width:460px;margin:0 auto;padding:max(12px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:10px;margin:4px 0 14px;height:18px;flex:none}
+#app{flex:1}
+.bar{flex:1;height:3px;background:var(--line);overflow:hidden}
+.fill{height:100%;width:0;background:var(--ink);transition:width .25s ease}
+.pct{font-size:12px;color:var(--muted);min-width:32px;text-align:right;font-variant-numeric:tabular-nums}
+.card{background:var(--card);border:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.03);border-radius:8px;padding:24px 20px 20px}
+.swap{animation:none}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:30px;margin:0 0 10px;line-height:1.15}
+h2{font-size:19px;font-weight:600;margin:0 0 14px;line-height:1.4}
+p{color:var(--muted);line-height:1.55;margin:4px 0 14px;font-size:15px}
+.tag{display:block;font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.opt{display:block;width:100%;min-height:58px;text-align:left;border:1px solid var(--line2);background:#fff;border-radius:6px;padding:16px;margin:0;font-size:16.5px;font-weight:500;line-height:1.35;color:var(--ink);cursor:pointer}
+.opt:active{background:var(--sel)}
+.opt.sel{border-color:var(--ink);background:var(--ink);color:#fff}
+@media (hover:hover){.opt:hover{border-color:var(--ink)}}
+.card > .opt + .opt{margin-top:10px}
+.opt small{display:block;font-weight:400;color:var(--muted);margin-top:3px}
+.vs{font-size:13px;color:var(--muted);text-align:center;margin:8px 0;line-height:16px}
+.btn{width:100%;min-height:52px;border:0;border-radius:6px;padding:14px;font-size:16px;font-weight:600;background:var(--ink);color:#fff;margin-top:18px;cursor:pointer}
+.btn:active{opacity:.85}
+.btn:disabled{background:var(--line);color:#9a968f;cursor:default}
+.btn.ghost{background:transparent;color:var(--muted);font-weight:500;margin-top:4px}
+.q{margin:22px 0 10px;font-weight:600;font-size:15px;line-height:1.4}
+.tag + .q{margin-top:4px}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;border:1px solid var(--line2);background:#fff;border-radius:6px;padding:10px 14px;font-size:14.5px;cursor:pointer;color:var(--ink)}
+.chip.sel{border-color:var(--ink);background:var(--ink);color:#fff}
+.scale{display:flex;flex-wrap:nowrap;gap:6px}
+.scale .chip{flex:1;text-align:center;padding:0;min-height:50px;font-size:17px;font-variant-numeric:tabular-nums}
+.ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px}
+input[type=number],input[type=text],textarea{width:100%;border:1px solid var(--line2);border-radius:6px;padding:14px;font-size:17px;font-family:inherit;color:var(--ink);background:#fff;-moz-appearance:textfield;appearance:none}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input::placeholder,textarea::placeholder{color:#aaa69f}
+input:focus,textarea:focus{outline:none;border-color:var(--ink)}
+textarea{resize:none;line-height:1.45}
+.err{color:#b42318;font-size:13px;min-height:18px;margin-top:8px;line-height:18px}
+.prize{border-left:3px solid var(--ink);background:var(--sel);padding:12px 14px;margin:14px 0;color:var(--ink);font-size:14.5px;line-height:1.6}
+.stat{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding:13px 0;font-size:14.5px;color:var(--muted)}
+.stat b{font-size:16px;color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+.ring{margin:10px auto 6px;background:none!important}
+.big{font-family:Georgia,"Times New Roman",serif;font-size:64px;color:var(--ink);line-height:1;font-variant-numeric:tabular-nums}
+.big span{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:16px;color:var(--muted)}
+.label{display:inline-block;font-weight:600;font-size:15px;color:var(--ink)}
+.meter{height:4px;background:var(--line);overflow:hidden;margin:18px 0 4px}
+.meter div{height:100%;background:var(--ink)}
+.insight{border-top:1px solid var(--line);padding:12px 0;margin:0;font-size:14.5px;line-height:1.55;color:#3d3b37}
+.insight:first-of-type{margin-top:18px}
+.insight b{color:var(--ink)}
+.small{font-size:12.5px;color:var(--muted);line-height:1.5}
+.center{text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top" id="top" style="visibility:hidden"><div class="bar"><div class="fill" id="fill"></div></div><div class="pct" id="pct">0%</div></div>
+  <div id="app"></div>
+</div>
+
+<script>
+// ================= CONFIG =================
+// Paste your Google Apps Script web app URL here (see setup steps)
+var ENDPOINT = 'https://script.google.com/macros/s/AKfycbzn3zqpSQriE59Bm4gnkeITw1YR9-KuXsnM3SJKjl3eamdpd6d6NtjptnKA7G5GDYsV/exec';
+// Date the draw happens, shown on the last screen
+var DRAW_DATE = '14 November 2026';
+// ==========================================
+
+// Number of adaptive questions per task
+var TRIALS = 6;
+
+// One random ID per respondent
+var RID = Math.random().toString(36).slice(2, 10);
+
+// Which reversal pair comes first: near (today vs tomorrow) or far (day 30 vs day 31)
+var FLIP = 'nearFirst';
+if (Math.random() < 0.5) { FLIP = 'farFirst'; }
+
+// All answers go here. survey = 'proposal' keeps these rows apart from the main survey in the Sheet
+var data = { id: RID, survey: 'proposal', flipOrder: FLIP, startedAt: new Date().toISOString() };
+// Marks test plays (#test) so they can be filtered out of the Sheet
+var TEST_MODE = location.hash === '#test';
+data.test = 'no';
+// Version of this short survey
+data.version = 'p1';
+if (TEST_MODE) { data.test = 'yes'; }
+// Optional answer, kept as an empty column when skipped
+// Every single tap, with its response time
+var trials = [];
+// Result of each adaptive task
+var results = {};
+
+var app = document.getElementById('app');
+var stepStart = 0;
+// True between a tap and the next screen, so a double tap cannot answer twice
+var busy = false;
+
+// Fisher-Yates shuffle
+function shuffle(arr) {
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+
+// Formats a number as rupees
+function rs(x) { return '₹' + Math.round(x).toLocaleString('en-IN'); }
+
+// Rounds to the nearest step
+function roundTo(x, step) { return Math.round(x / step) * step; }
+
+// Builds one adaptive task definition (today vs in 30 days)
+function task(ctx) {
+  var t = { type: 'adaptive', ctx: ctx, frame: 'A', id: 'A_' + ctx };
+  if (ctx === 'health') { t.V = 10; t.lo = 10; t.hi = 25; t.step = 1; }
+  else { t.V = 500; t.lo = 500; t.hi = 1250; t.step = 5; }
+  return t;
+}
+
+// Builds one simple choice step
+function choice(id, title, options, sub) {
+  return { type: 'choice', id: id, title: title, options: options, sub: sub };
+}
+
+// The 4 contexts in random order, with the dominance check in the middle
+function block() {
+  var list = shuffle([task('gain'), task('loss'), task('health'), task('friend')]);
+  list.splice(2, 0, choice('attn1', 'Quick check: which would you rather get?', ['₹1000 today', '₹10 in 60 days']));
+  return list;
+}
+
+// Builds the full list of steps
+function buildSteps() {
+  var s = [];
+  s.push({ type: 'consent' });
+  s.push({ type: 'about' });
+  var near = choice('flipNear', 'Which would you rather get?', ['₹100 today', '₹110 tomorrow']);
+  var far = choice('flipFar', 'Which would you rather get?', ['₹100 in 30 days', '₹110 in 31 days']);
+  // One reversal pair at the start, the other at the end, in random order
+  var flipFirst = near;
+  var flipLast = far;
+  if (FLIP === 'farFirst') { flipFirst = far; flipLast = near; }
+  s.push(flipFirst);
+  s.push({ type: 'intro', tag: 'Main part', title: 'Quick choices', text: 'Pick the option you prefer each time. Imagine every payment is real and guaranteed. You can\'t go back to change an answer. About 2 minutes.' });
+  s = s.concat(block());
+  s.push(flipLast);
+  s.push({ type: 'upi' });
+  return s;
+}
+
+var steps = buildSteps();
+
+// Progress units: adaptive tasks count as TRIALS
+var totalUnits = 0;
+for (var i = 0; i < steps.length; i++) {
+  if (steps[i].type === 'adaptive') { totalUnits += TRIALS; } else { totalUnits += 1; }
+}
+var doneUnits = 0;
+var idx = 0;
+
+// Updates the progress bar
+function progress() {
+  var p = Math.round(100 * doneUnits / totalUnits);
+  document.getElementById('fill').style.width = p + '%';
+  document.getElementById('pct').textContent = p + '%';
+}
+
+// Claims the current screen for one tap; returns false if a tap was already taken
+function claim() {
+  if (busy) { return false; }
+  busy = true;
+  return true;
+}
+
+// Moves to the next step
+function next() {
+  doneUnits += 1;
+  idx += 1;
+  if (idx >= steps.length) { finish(); return; }
+  render();
+}
+
+// Shows the current step
+function render() {
+  var s = steps[idx];
+  if (idx > 0) { document.getElementById('top').style.visibility = 'visible'; }
+  progress();
+  window.scrollTo(0, 0);
+  busy = false;
+  stepStart = performance.now();
+  if (s.type === 'consent') { renderConsent(); }
+  else if (s.type === 'about') { renderAbout(); }
+  else if (s.type === 'intro') { renderIntro(s); }
+  else if (s.type === 'choice') { renderChoice(s); }
+  else if (s.type === 'adaptive') { startAdaptive(s); }
+  else if (s.type === 'number') { renderNumber(s); }
+  else if (s.type === 'scale') { renderScale(s); }
+  else if (s.type === 'text') { renderText(s); }
+  else if (s.type === 'upi') { renderUpi(); }
+}
+
+// Milliseconds since this screen appeared
+function rt() { return Math.round(performance.now() - stepStart); }
+
+// ---------- Screens ----------
+
+function renderConsent() {
+  app.innerHTML =
+    '<div class="card"><span class="tag">Neuroeconomics project · IIIT Hyderabad</span>' +
+    '<h1>Now or Later?</h1>' +
+    '<p>A 3-minute game of quick everyday choices. No right or wrong answers. You get a personal report card at the end.</p>' +
+    '<div class="prize"><b>5 winners</b><br>1 person gets one of their own money choices <b>paid for real</b> via UPI, on the date it says (up to ₹1,250).<br>4 more win <b>₹200 Amazon vouchers</b>.<br>Your answers do not change your chance of winning, so just pick what you prefer.</div>' +
+    '<p class="small">Voluntary. Answers are confidential and analysed without names. Your UPI ID (optional, at the end) is used only to pay winners, then deleted. 18+ only.</p>' +
+    '<button class="btn" id="yes">I agree, let\'s start</button>' +
+    '<button class="btn ghost" id="no">No thanks</button></div>';
+  document.getElementById('yes').onclick = function () {
+    if (!claim()) { return; }
+    data.consent = 'yes';
+    next();
+  };
+  document.getElementById('no').onclick = function () {
+    app.innerHTML = '<div class="card center"><h2>No problem!</h2><p>Thanks for stopping by.</p></div>';
+  };
+}
+
+function renderIntro(s) {
+  app.innerHTML = '<div class="card"><span class="tag">' + s.tag + '</span><h2>' + s.title + '</h2><p>' + s.text + '</p><button class="btn" id="go">Continue</button></div>';
+  document.getElementById('go').onclick = function () {
+    if (!claim()) { return; }
+    next();
+  };
+}
+
+// Draws a group of single-pick chips and stores the answer in data[key]
+function chips(containerId, key, options) {
+  var box = document.getElementById(containerId);
+  for (var i = 0; i < options.length; i++) {
+    var b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = options[i];
+    b.setAttribute('data-v', options[i]);
+    b.onclick = function () {
+      var all = box.querySelectorAll('.chip');
+      for (var j = 0; j < all.length; j++) { all[j].classList.remove('sel'); }
+      this.classList.add('sel');
+      data[key] = this.getAttribute('data-v');
+      checkAbout();
+    };
+    box.appendChild(b);
+  }
+}
+
+function renderAbout() {
+  app.innerHTML =
+    '<div class="card"><span class="tag">About you · 20 sec</span>' +
+    '<div class="q">Your age</div><input type="number" id="age" inputmode="numeric" placeholder="e.g. 20">' +
+    '<div class="q">Academic year</div><div class="row" id="c_year"></div>' +
+    '<div class="q">Field of study</div><div class="row" id="c_field"></div>' +
+    '<div class="err" id="err"></div><button class="btn" id="go" disabled>Next</button></div>';
+  chips('c_year', 'year', ['1st year', '2nd year', '3rd year', '4th year', '5th year / PG', 'Not a student']);
+  chips('c_field', 'field', ['CSE / IT', 'ECE / EE', 'Other engineering', 'Science', 'Humanities / social sciences', 'Other']);
+  document.getElementById('age').oninput = checkAbout;
+  document.getElementById('go').onclick = function () {
+    if (!claim()) { return; }
+    data.age = Number(document.getElementById('age').value);
+    next();
+  };
+}
+
+// Enables Next on the About screen only when everything required is filled
+function checkAbout() {
+  var ageEl = document.getElementById('age');
+  if (!ageEl) { return; }
+  var age = Number(ageEl.value);
+  var ageOk = ageEl.value !== '' && Math.floor(age) === age && age >= 18 && age <= 70;
+  var ok = ageOk && data.year && data.field;
+  var err = '';
+  if (ageEl.value !== '' && !ageOk) { err = 'Age must be a whole number between 18 and 70.'; }
+  document.getElementById('err').textContent = err;
+  document.getElementById('go').disabled = !ok;
+}
+
+function renderChoice(s) {
+  var html = '<div class="card"><h2>' + s.title + '</h2>';
+  if (s.sub) { html += '<p>' + s.sub + '</p>'; }
+  for (var i = 0; i < s.options.length; i++) {
+    html += '<button class="opt" data-i="' + i + '">' + s.options[i] + '</button>';
+  }
+  html += '</div>';
+  app.innerHTML = html;
+  var btns = app.querySelectorAll('.opt');
+  for (var j = 0; j < btns.length; j++) {
+    btns[j].onclick = function () {
+      if (!claim()) { return; }
+      var k = Number(this.getAttribute('data-i'));
+      data[s.id] = s.options[k];
+      data[s.id + '_rt'] = rt();
+      trials.push({ step: s.id, choice: s.options[k], rt: data[s.id + '_rt'] });
+      this.classList.add('sel');
+      setTimeout(next, 120);
+    };
+  }
+}
+
+// Text for the two options of an adaptive question
+function labels(t, L) {
+  var v = rs(t.V);
+  var l = rs(L);
+  var out = { title: 'Which would you rather get?', sub: '', a: v + ' today', b: l + ' in 30 days' };
+  if (t.ctx === 'friend') {
+    out.title = 'You are choosing for a close friend.';
+    out.sub = 'They get the money, not you. Which should they get?';
+  } else if (t.ctx === 'loss') {
+    out.title = 'You got a ₹500 fine. When would you rather pay?';
+    out.a = 'Pay ' + v + ' today'; out.b = 'Pay ' + l + ' in 30 days';
+  } else if (t.ctx === 'health') {
+    out.title = 'You are going to catch a mild flu. When would you rather have it?';
+    out.a = 'Ill for ' + t.V + ' days, starting today';
+    out.b = 'Ill for ' + L + ' days, starting in 30 days';
+  }
+  return out;
+}
+
+// Runs one adaptive task: TRIALS questions that home in on the switch point
+function startAdaptive(t) {
+  var lo = t.lo;
+  var hi = t.hi;
+  var n = 0;
+  var hist = [];
+
+  // Next offer: the midpoint, kept strictly inside (lo, hi) so no offer repeats a known bound
+  function offer() {
+    var L = roundTo((lo + hi) / 2, t.step);
+    if (L >= hi && hi - t.step > lo) { L = hi - t.step; }
+    if (L <= lo && lo + t.step < hi) { L = lo + t.step; }
+    return L;
+  }
+
+  function ask() {
+    var L = offer();
+    var x = labels(t, L);
+    var oa = document.getElementById('oa');
+    if (n > 0 && oa) {
+      // Same task: update the two options in place instead of redrawing the card
+      var ob = document.getElementById('ob');
+      oa.textContent = x.a;
+      ob.textContent = x.b;
+      oa.classList.remove('sel');
+      ob.classList.remove('sel');
+      var pair = document.getElementById('pair');
+      pair.classList.remove('swap');
+      // Forces a reflow so the fade animation restarts
+      void pair.offsetWidth;
+      pair.classList.add('swap');
+    } else {
+      var html = '<div class="card"><h2>' + x.title + '</h2>';
+      if (x.sub) { html += '<p>' + x.sub + '</p>'; }
+      html += '<div id="pair"><button class="opt" id="oa">' + x.a + '</button><div class="vs">or</div><button class="opt" id="ob">' + x.b + '</button></div></div>';
+      app.innerHTML = html;
+      oa = document.getElementById('oa');
+    }
+    busy = false;
+    stepStart = performance.now();
+    oa.onclick = function () { answer(L, 'sooner', this); };
+    document.getElementById('ob').onclick = function () { answer(L, 'later', this); };
+  }
+
+  function answer(L, pick, el) {
+    if (!claim()) { return; }
+    var r = rt();
+    el.classList.add('sel');
+    hist.push({ L: L, pick: pick, rt: r });
+    trials.push({ step: t.id, offer: L, choice: pick, rt: r });
+    if (t.ctx === 'loss' || t.ctx === 'health') {
+      // Postponing a cost means the later amount is still too small
+      if (pick === 'later') { lo = L; } else { hi = L; }
+    } else {
+      // Choosing later means the later amount was enough
+      if (pick === 'later') { hi = L; } else { lo = L; }
+    }
+    n += 1;
+    doneUnits += 1;
+    progress();
+    if (n < TRIALS) {
+      setTimeout(ask, 120);
+      return;
+    }
+    var ind = (lo + hi) / 2;
+    var k = (ind / t.V - 1) / 30;
+    // Censored when the switch point is pinned at an end of the range.
+    // 'high': pinned at the top, true k is at least this value (gain: never chose later; loss: always postponed).
+    // 'low': pinned at the bottom (gain: always chose later; loss: always paid now).
+    var tol = (t.hi - t.lo) / Math.pow(2, TRIALS - 1);
+    var censored = 'no';
+    if (hi === t.hi && lo >= t.hi - tol) { censored = 'high'; }
+    if (lo === t.lo && hi <= t.lo + tol) { censored = 'low'; }
+    results[t.id] = { ind: ind, k: k };
+    data[t.id + '_ind'] = ind;
+    data[t.id + '_k'] = Number(k.toFixed(5));
+    data[t.id + '_censored'] = censored;
+    var sum = 0;
+    for (var i = 0; i < hist.length; i++) { sum += hist[i].rt; }
+    data[t.id + '_meanRT'] = Math.round(sum / hist.length);
+    // Undo the extra unit that next() will add
+    doneUnits -= 1;
+    setTimeout(next, 120);
+  }
+
+  ask();
+}
+
+function renderNumber(s) {
+  app.innerHTML = '<div class="card"><h2>' + s.title + '</h2><input type="number" id="num" inputmode="decimal" placeholder="' + s.placeholder + '"><div class="err" id="err"></div><button class="btn" id="go" disabled>Next</button></div>';
+  var el = document.getElementById('num');
+  el.focus();
+  el.oninput = function () {
+    var v = Number(el.value);
+    var ok = el.value !== '' && v >= s.min && v <= s.max;
+    var msg = '';
+    if (el.value !== '' && !ok) { msg = 'Please enter a number between ' + s.min.toLocaleString('en-IN') + ' and ' + s.max.toLocaleString('en-IN') + '.'; }
+    document.getElementById('err').textContent = msg;
+    document.getElementById('go').disabled = !ok;
+  };
+  document.getElementById('go').onclick = function () {
+    if (!claim()) { return; }
+    data[s.id] = Number(el.value);
+    data[s.id + '_rt'] = rt();
+    trials.push({ step: s.id, value: data[s.id], rt: data[s.id + '_rt'] });
+    next();
+  };
+}
+
+function renderScale(s) {
+  app.innerHTML = '<div class="card"><h2>' + s.title + '</h2><div class="row scale" id="sc"></div><div class="ends"><span>' + s.ends[0] + '</span><span>' + s.ends[1] + '</span></div></div>';
+  var box = document.getElementById('sc');
+  for (var i = 1; i <= 5; i++) {
+    var b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = String(i);
+    b.onclick = function () {
+      if (!claim()) { return; }
+      this.classList.add('sel');
+      data[s.id] = Number(this.textContent);
+      trials.push({ step: s.id, choice: data[s.id], rt: rt() });
+      setTimeout(next, 120);
+    };
+    box.appendChild(b);
+  }
+}
+
+function renderText(s) {
+  app.innerHTML = '<div class="card"><h2>' + s.title + '</h2><p class="small">Optional</p><textarea id="tx" rows="3" placeholder="e.g. the extra amount had to be big enough"></textarea><button class="btn" id="go">Next</button></div>';
+  document.getElementById('go').onclick = function () {
+    if (!claim()) { return; }
+    data[s.id] = document.getElementById('tx').value.trim();
+    next();
+  };
+}
+
+function renderUpi() {
+  app.innerHTML = '<div class="card"><span class="tag">Last step</span><h2>Enter the draw</h2><p>Add your UPI ID to enter the cash draw and the voucher draw. It is used only to pay winners, then deleted. Leave it blank to skip.</p><input type="text" id="upi" placeholder="yourname@okaxis" autocapitalize="off"><button class="btn" id="go">Submit &amp; see my report card</button></div>';
+  document.getElementById('go').onclick = function () {
+    if (!claim()) { return; }
+    data.upi = document.getElementById('upi').value.trim();
+    this.disabled = true;
+    this.textContent = 'Submitting...';
+    next();
+  };
+}
+
+// ---------- Scoring and saving ----------
+
+// Patience score 0-100 from an indifference amount
+function patience(ind, V) {
+  var r = ind / V;
+  var sc = Math.round(100 * (1 - (r - 1) / 1.5));
+  if (sc < 0) { sc = 0; }
+  if (sc > 100) { sc = 100; }
+  return sc;
+}
+
+function finish() {
+  // Classic reversal: today in the near pair, wait in the far pair
+  data.flipped = 'no';
+  if (data.flipNear === '₹100 today' && data.flipFar === '₹110 in 31 days') { data.flipped = 'yes'; }
+  // Reverse: wait in the near pair, sooner in the far pair
+  data.reverseFlip = 'no';
+  if (data.flipNear === '₹110 tomorrow' && data.flipFar === '₹100 in 30 days') { data.reverseFlip = 'yes'; }
+  data.attentionFail = 'no';
+  if (data.attn1 === '₹10 in 60 days') { data.attentionFail = 'yes'; }
+  data.finishedAt = new Date().toISOString();
+  data.totalSec = Math.round((new Date(data.finishedAt) - new Date(data.startedAt)) / 1000);
+  data.device = navigator.userAgent;
+  data.trialsJSON = JSON.stringify(trials);
+  send();
+  try { localStorage.setItem('nl2_done', '1'); } catch (e) {}
+  report();
+}
+
+// True once ENDPOINT holds a real Apps Script URL
+function endpointReady() {
+  return ENDPOINT.indexOf('https://') === 0;
+}
+
+// Reads the queue of unsent responses (an object keyed by response id)
+function readQueue() {
+  var q = {};
+  try {
+    var raw = localStorage.getItem('nl2_queue');
+    if (raw) { q = JSON.parse(raw); }
+  } catch (e) { q = {}; }
+  if (!q || typeof q !== 'object') { q = {}; }
+  return q;
+}
+
+function writeQueue(q) {
+  try { localStorage.setItem('nl2_queue', JSON.stringify(q)); } catch (e) {}
+}
+
+// Removes one response from the queue after it was sent
+function dequeue(id) {
+  var q = readQueue();
+  delete q[id];
+  writeQueue(q);
+}
+
+// Posts one stored response; it stays queued if the network fails
+function post(id, body) {
+  if (!endpointReady()) { return; }
+  fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: body, keepalive: true })
+    .then(function () { dequeue(id); })
+    .catch(function () {});
+}
+
+// Saves the response to the queue first, then sends it to the Google Sheet
+function send() {
+  var body = JSON.stringify(data);
+  var q = readQueue();
+  q[data.id] = body;
+  writeQueue(q);
+  if (!endpointReady()) {
+    console.warn('ENDPOINT is not set; response kept in localStorage only.');
+    return;
+  }
+  post(data.id, body);
+}
+
+// Retries every response that failed to send earlier
+function retryPending() {
+  var q = readQueue();
+  var ids = Object.keys(q);
+  for (var i = 0; i < ids.length; i++) { post(ids[i], q[ids[i]]); }
+}
+
+// Older versions kept a single pending response under this key
+function migrateOldPending() {
+  try {
+    var old = localStorage.getItem('nl2_pending');
+    if (old) {
+      var q = readQueue();
+      q['legacy_' + Date.now()] = old;
+      writeQueue(q);
+      localStorage.removeItem('nl2_pending');
+    }
+  } catch (e) {}
+}
+
+function report() {
+  document.getElementById('top').style.visibility = 'hidden';
+  var gA = results.A_gain;
+  var fA = results.A_friend;
+  var lA = results.A_loss;
+  var score = patience(gA.ind, 500);
+
+  var ins = [];
+  if (fA.ind < gA.ind - 20) {
+    ins.push('<b>More patient for your friend</b> than for yourself. Choosing for others tends to feel less urgent.');
+  } else if (fA.ind > gA.ind + 20) {
+    ins.push('<b>More impatient for your friend</b> than for yourself. You want them to get it now.');
+  } else {
+    ins.push('<b>Same rules for you and your friend.</b> You choose the same way for both.');
+  }
+  if (lA.ind <= 520) {
+    ins.push('<b>"Get it over with".</b> You prefer paying a fine today even when waiting costs nothing.');
+  } else {
+    ins.push('<b>Happy to delay a cost</b> if the extra amount is small.');
+  }
+  if (data.flipped === 'yes') {
+    ins.push('<b>Your choice flipped.</b> You took ₹100 today over ₹110 tomorrow, but waited a day when both were a month away. Most people do this.');
+  }
+
+  var label = 'Balanced';
+  if (score >= 75) { label = 'Very patient'; }
+  else if (score >= 55) { label = 'Patient'; }
+  else if (score < 30) { label = 'Lives in the now'; }
+
+  var html = '<div class="card"><span class="tag">Your report card</span><h1>Thanks for playing!</h1>' +
+    '<div class="center"><div class="small">Your patience score</div>' +
+    '<div class="ring" style="background:conic-gradient(var(--pri) ' + score + '%, rgba(84,64,232,.12) 0)"><div><div class="big">' + score + '<span>/100</span></div></div></div>' +
+    '<span class="label">' + label + '</span>' +
+    '<div class="meter"><div style="width:' + score + '%"></div></div><div class="ends"><span>Now-focused</span><span>Future-focused</span></div></div>';
+  for (var i = 0; i < ins.length; i++) { html += '<div class="insight">' + ins[i] + '</div>'; }
+  html += '<div class="stat"><span>Waiting a month for ₹500 needs at least</span><b>' + rs(gA.ind) + '</b></div>' +
+    '<p class="small" style="margin-top:14px">Winners are drawn after ' + DRAW_DATE + '. Please don\'t tell friends the questions before they play.</p>' +
+    '<button class="btn" id="share">Share with friends</button></div>';
+  app.innerHTML = html;
+  document.getElementById('share').onclick = function () {
+    // Share the clean link, never the #test one
+    var link = location.origin + location.pathname;
+    var txt = 'I got a patience score of ' + score + '/100 on this 3-min decision game. 5 people win up to ₹1,250 + Amazon vouchers. Try it: ' + link;
+    if (navigator.share) {
+      navigator.share({ text: txt }).catch(function () {});
+    } else {
+      window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+    }
+  };
+}
+
+// ---------- Start ----------
+migrateOldPending();
+retryPending();
+// Try again whenever the phone comes back online
+window.addEventListener('online', retryPending);
+var already = null;
+try { already = localStorage.getItem('nl2_done'); } catch (e) {}
+if (already && !TEST_MODE) {
+  app.innerHTML = '<div class="card center"><h2>You\'ve already played!</h2><p>Thanks. Only one response per person, please.</p></div>';
+} else {
+  render();
+}
+</script>
+</body>
+</html>

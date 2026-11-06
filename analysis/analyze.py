@@ -94,6 +94,11 @@ def load(path):
         n_test = int((df["test"] == "yes").sum())
         df = df[df["test"] != "yes"]
         say("Test plays (#test) removed: %d" % n_test)
+    # Rows from the short proposal survey (proposal.html) are analysed by analyze_proposal.py
+    if "survey" in df.columns:
+        n_prop = int((df["survey"] == "proposal").sum())
+        df = df[df["survey"] != "proposal"]
+        say("Proposal-survey rows set aside: %d" % n_prop)
     numeric = ["age", "stress", "trust", "procrast", "regret", "anchorAmount", "totalSec",
                "type1Score", "correctScore", "flipNear_rt", "flipFar_rt"]
     for c in CONTEXTS:

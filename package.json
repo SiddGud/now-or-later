@@ -4,7 +4,7 @@
   "private": true,
   "description": "Now or Later? Neuroeconomics survey app (IIIT Hyderabad, Team 6)",
   "scripts": {
-    "test": "node tests/playthrough.js"
+    "test": "node tests/playthrough.js && node tests/proposal.js"
   },
   "devDependencies": {
     "playwright": "^1.64.1"

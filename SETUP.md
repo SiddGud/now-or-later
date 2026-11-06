@@ -53,3 +53,10 @@
 - p1-p5 = puzzles; type1Score = number of quick intuitive answers (0-5); correctScore = correct (0-5)
 - attentionFail = yes -> remove this response
 - trialsJSON = every single tap with offer, choice and decision time (ms)
+
+## Short proposal survey (proposal.html)
+A 3-minute survey that follows the project proposal exactly: gain, fine, flu and friend (today vs 30 days, 6 adaptive questions each, random order), one dominance check, and the near/far pair (₹100 today vs ₹110 tomorrow; day 30 vs day 31), one at the start and one at the end in random order.
+- Link: https://siddgud.github.io/now-or-later/proposal.html
+- Same Sheet and prize draw. Rows have `survey = proposal`; `analysis/analyze.py` skips them.
+- Analyse: `py analysis/analyze_proposal.py responses.csv` (writes to analysis/out/proposal/).
+- Test: `node tests/proposal.js`
