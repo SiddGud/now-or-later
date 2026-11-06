@@ -109,6 +109,10 @@ def load(path):
         df["version"] = "v1"
     df["version"] = df["version"].fillna("v1").replace("", "v1")
     say("Versions: %s" % df["version"].value_counts().to_dict())
+    # v1 and v2 always asked the near classic pair first
+    if "flipOrder" not in df.columns:
+        df["flipOrder"] = "nearFirst"
+    df["flipOrder"] = df["flipOrder"].fillna("nearFirst").replace("", "nearFirst")
     if KEEP != "all":
         df = df[df["version"] == KEEP]
         say("Keeping only %s: %d rows" % (KEEP, len(df)))
@@ -190,6 +194,16 @@ def h1(df, label):
             % (k_flip, n, 100 * k_flip / n, 100 * ci.low, 100 * ci.high))
         say("Pattern table (flipNear x flipFar):")
         say(pd.crosstab(df["flipNear"], df["flipFar"]).to_string())
+        # Exploratory: classic reversals (today, then later) against reverse ones (later, then sooner)
+        rev = (df["flipNear"] == "₹1100 in 1 week") & (df["flipFar"] == "₹1000 in 4 weeks")
+        n_rev = int(rev.sum())
+        if k_flip + n_rev > 0:
+            mc = stats.binomtest(k_flip, k_flip + n_rev).pvalue
+            say("Exploratory McNemar: classic %d vs reverse %d, exact p=%.4f" % (k_flip, n_rev, mc))
+        # v1 and v2 always asked the near pair first; v3 randomises it
+        for o, g in df.groupby("flipOrder"):
+            g_rev = int(((g["flipNear"] == "₹1100 in 1 week") & (g["flipFar"] == "₹1000 in 4 weeks")).sum())
+            say("  %s (n=%d): classic %d, reverse %d" % (o, len(g), int(g["flipped_yes"].sum()), g_rev))
     rows = []
     for c in CONTEXTS:
         a = df["A_%s_k" % c]
@@ -262,6 +276,9 @@ def h5(df):
     u = stats.mannwhitneyu(hi, lo, alternative="two-sided")
     say("high: n=%d median=%.0f | low: n=%d median=%.0f | U=%.1f p=%.5f r_rb=%.3f"
         % (len(hi), hi.median(), len(lo), lo.median(), u.statistic, u.pvalue, rank_biserial_indep(hi, lo)))
+    # H5 predicts a direction (high anchor gives higher amounts), so the one-sided test is also reported
+    u1 = stats.mannwhitneyu(hi, lo, alternative="greater")
+    say("One-sided (high > low, as H5 predicts): p=%.5f" % u1.pvalue)
     say("Anchor yes-rate: " + df.groupby("anchorGroup")["anchorYes"].apply(yes_rate).round(3).to_string())
     return {"U": u.statistic, "p": u.pvalue}
 
@@ -277,6 +294,16 @@ def mean_logk_A(df):
 
 def h6(df):
     say("\n== H6 Type 1 thinking ==")
+    say("All versions together. v1 and v2 used easier puzzles that most people solved, so type1Score varied little there.")
+    h6_part(df)
+    v3 = df[df["version"] == "v3"]
+    if len(v3) >= 5:
+        say("\n-- H6, v3 only (harder CRT-2 and Toplak puzzles), n=%d --" % len(v3))
+        say("type1Score distribution: %s" % v3["type1Score"].value_counts().sort_index().to_dict())
+        h6_part(v3)
+
+
+def h6_part(df):
     df = df.copy()
     df["logk_A"] = mean_logk_A(df)
     rho = stats.spearmanr(df["type1Score"], df["logk_A"], nan_policy="omit")

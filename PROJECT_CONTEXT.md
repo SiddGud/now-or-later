@@ -78,3 +78,12 @@ Every response now has a `version` column (85 fields). Rows without it are v1.
 - Health task range 20 to 80 days (was 20 to 50), because about a quarter of v1 respondents hit the top.
 - Second attention check reworded to an explicit instruction: 'Quick check: to show you are reading, tap "₹100 in 30 days".' The options are unchanged. In v1, 21% failed the old wording.
 - Unchanged: all other wording, money ranges, delays, the k formula, groups and the report card. k is on the same scale in v1 and v2, so they can be pooled with version as a covariate, or analysed separately: `py analysis/analyze.py responses.csv v2`.
+
+## Version 3 (from 7 November 2026)
+New column `flipOrder` (86 fields). Rows without it asked the near pair first.
+- The two classic pairs are in random order: `nearFirst` (today vs 1 week at the start, 4 vs 5 weeks near the end) or `farFirst` (the reverse). In v1 and v2 the near pair always came first, so order and fatigue were confounded with present bias. In v1 and v2, reverse flips outnumbered classic ones (25 vs 12).
+- Brain teasers p1 to p4 replaced, because about 85% of people solved the v1/v2 items, leaving type1Score almost no variation. New items, as [gut answer, correct answer]:
+  p1 race, pass second place [1, 2]; p2 farmer, 15 sheep, all but 8 die [7, 8] (both CRT-2, Thomson & Oppenheimer 2016);
+  p3 Jerry, 15th highest and 15th lowest [30, 29] (Toplak et al. 2014); p4 dirt in a 3x3x3 m hole [27, 0] (CRT-2).
+  p5 (Priya) unchanged. type1Score from v1/v2 and v3 measure different items: analyse H6 on v3 separately (the script does).
+- Analysis additions: exploratory McNemar test (classic vs reverse flips, overall and by flipOrder); one-sided H5 test, since H5 is directional.

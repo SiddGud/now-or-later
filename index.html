@@ -93,16 +93,20 @@ var ORDER = 'AB';
 if (Math.random() < 0.5) { ORDER = 'BA'; }
 var NUDGE = 'standard';
 if (Math.random() < 0.5) { NUDGE = 'hiddenZero'; }
+// Which classic pair comes first: the near pair (today vs 1 week) or the far pair (4 vs 5 weeks)
+var FLIP = 'nearFirst';
+if (Math.random() < 0.5) { FLIP = 'farFirst'; }
 var ANCHOR = 'high';
 if (Math.random() < 0.5) { ANCHOR = 'low'; }
 
 // All answers go here
-var data = { id: RID, order: ORDER, nudgeGroup: NUDGE, anchorGroup: ANCHOR, startedAt: new Date().toISOString() };
+var data = { id: RID, order: ORDER, nudgeGroup: NUDGE, anchorGroup: ANCHOR, flipOrder: FLIP, startedAt: new Date().toISOString() };
 // Marks test plays (#test) so they can be filtered out of the Sheet
 var TEST_MODE = location.hash === '#test';
 data.test = 'no';
-// Version of the questions: v2 has 6 steps per task, health up to 80 days and a new second check
-data.version = 'v2';
+// Version of the questions. v2: 6 steps per task, health up to 80 days, new second check.
+// v3: random order of the two classic pairs, harder brain teasers (CRT-2 and Toplak items).
+data.version = 'v3';
 if (TEST_MODE) { data.test = 'yes'; }
 // Optional answer, kept as an empty column when skipped
 data.spending = '';
@@ -161,7 +165,13 @@ function buildSteps() {
   var s = [];
   s.push({ type: 'consent' });
   s.push({ type: 'about' });
-  s.push(choice('flipNear', 'Which would you rather get?', ['₹1000 today', '₹1100 in 1 week']));
+  var near = choice('flipNear', 'Which would you rather get?', ['₹1000 today', '₹1100 in 1 week']);
+  var far = choice('flipFar', 'Which would you rather get?', ['₹1000 in 4 weeks', '₹1100 in 5 weeks']);
+  // One classic pair at the start, the other near the end, in random order
+  var flipFirst = near;
+  var flipLast = far;
+  if (FLIP === 'farFirst') { flipFirst = far; flipLast = near; }
+  s.push(flipFirst);
   var first = ORDER.charAt(0);
   var second = ORDER.charAt(1);
   s.push({ type: 'intro', tag: 'Part 1 of 2', title: 'Quick choices', text: 'Pick the option you prefer each time. Imagine every payment is real and guaranteed. You can\'t go back to change an answer. About 2 minutes.' });
@@ -171,15 +181,15 @@ function buildSteps() {
   s.push(task('nudge', 'A'));
   s.push({ type: 'anchor' });
   s.push({ type: 'number', id: 'anchorAmount', title: 'What is the SMALLEST amount in 1 year that would make you give up ₹5,000 today?', min: 5000, max: 100000, placeholder: 'Amount in ₹' });
-  s.push(choice('flipFar', 'Which would you rather get?', ['₹1000 in 4 weeks', '₹1100 in 5 weeks']));
+  s.push(flipLast);
   s.push({ type: 'scale', id: 'procrast', title: 'How often do you put off tasks until the last minute?', ends: ['Never', 'Always'] });
   s.push({ type: 'scale', id: 'regret', title: 'How often do you spend money on things you later wish you hadn\'t?', ends: ['Never', 'Always'] });
   s.push({ type: 'text', id: 'comment', title: 'In a line: how did you decide between sooner and later?', optional: true });
   s.push({ type: 'intro', tag: 'Bonus', title: '5 quick brain teasers', text: 'About 1 minute. Go with your answer, no searching.' });
-  s.push({ type: 'number', id: 'p1', title: 'You can save ₹6,000 in 6 months. Your friend can save ₹6,000 in 12 months. Saving together, how many months to save ₹6,000?', min: 0, max: 1000000, placeholder: 'Months' });
-  s.push({ type: 'number', id: 'p2', title: 'Your savings double every year. After 10 years you have ₹1,02,400. After how many years did you have half of that?', min: 0, max: 1000000, placeholder: 'Years' });
-  s.push({ type: 'number', id: 'p3', title: 'A shop gives 20% off, then another 20% off the new price. What is the total discount, in %?', min: 0, max: 1000000, placeholder: '%' });
-  s.push({ type: 'number', id: 'p4', title: 'A ₹8,000 stock falls 50% in month 1, then rises 75% in month 2. What is it worth now, in ₹?', min: 0, max: 10000000, placeholder: '₹' });
+  s.push({ type: 'number', id: 'p1', title: 'You are running a race and you pass the person in second place. What place are you in now?', min: 1, max: 1000, placeholder: 'Place' });
+  s.push({ type: 'number', id: 'p2', title: 'A farmer had 15 sheep and all but 8 died. How many sheep are left?', min: 0, max: 1000, placeholder: 'Sheep' });
+  s.push({ type: 'number', id: 'p3', title: 'Jerry got both the 15th highest and the 15th lowest mark in his class. How many students are in the class?', min: 1, max: 1000, placeholder: 'Students' });
+  s.push({ type: 'number', id: 'p4', title: 'How many cubic metres of dirt are there in a hole that is 3 m deep, 3 m wide and 3 m long?', min: 0, max: 1000, placeholder: 'Cubic metres' });
   s.push(choice('p5', 'Priya, 22, pays her bills early, saves every month and tracks her budget in a spreadsheet. Which is MORE LIKELY?', ['Priya has a savings account', 'Priya has a savings account and invests in a SIP every month']));
   s.push({ type: 'upi' });
   return s;
@@ -541,10 +551,10 @@ function renderUpi() {
 // Counts quick intuitive answers on the puzzles
 function type1Score() {
   var s = 0;
-  if (data.p1 === 9) { s += 1; }
-  if (data.p2 === 5) { s += 1; }
-  if (data.p3 === 40) { s += 1; }
-  if (data.p4 === 10000) { s += 1; }
+  if (data.p1 === 1) { s += 1; }
+  if (data.p2 === 7) { s += 1; }
+  if (data.p3 === 30) { s += 1; }
+  if (data.p4 === 27) { s += 1; }
   if (data.p5 === 'Priya has a savings account and invests in a SIP every month') { s += 1; }
   return s;
 }
@@ -552,10 +562,10 @@ function type1Score() {
 // Counts correct puzzle answers
 function correctScore() {
   var s = 0;
-  if (data.p1 === 4) { s += 1; }
-  if (data.p2 === 9) { s += 1; }
-  if (data.p3 === 36) { s += 1; }
-  if (data.p4 === 7000) { s += 1; }
+  if (data.p1 === 2) { s += 1; }
+  if (data.p2 === 8) { s += 1; }
+  if (data.p3 === 29) { s += 1; }
+  if (data.p4 === 0) { s += 1; }
   if (data.p5 === 'Priya has a savings account') { s += 1; }
   return s;
 }

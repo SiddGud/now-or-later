@@ -13,7 +13,7 @@ var ROOT = path.join(__dirname, '..');
 var REQUIRED = [
   'id', 'order', 'nudgeGroup', 'anchorGroup', 'startedAt', 'consent', 'age', 'describes', 'spending',
   'priorKnowledge', 'otherSurvey', 'stress', 'trust', 'flipNear', 'flipNear_rt',
-  'attn1', 'attn2', 'version', 'anchorYes', 'anchorAmount', 'flipFar', 'procrast', 'regret', 'comment',
+  'attn1', 'attn2', 'version', 'flipOrder', 'anchorYes', 'anchorAmount', 'flipFar', 'procrast', 'regret', 'comment',
   'p1', 'p2', 'p3', 'p4', 'p5', 'p1_rt', 'p2_rt', 'p3_rt', 'p4_rt', 'p5_rt', 'upi',
   'type1Score', 'correctScore', 'flipped', 'attentionFail', 'finishedAt', 'totalSec', 'device', 'trialsJSON'
 ];
@@ -126,10 +126,10 @@ async function playOnce(browser, base, mode, hash) {
     else if (st.type === 'number') {
       var v;
       if (st.id === 'anchorAmount') { v = randInt(5000, 100000); }
-      else if (st.id === 'p1') { v = pick([4, 9, 6]); }
-      else if (st.id === 'p2') { v = pick([9, 5, 10]); }
-      else if (st.id === 'p3') { v = pick([36, 40, 30]); }
-      else { v = pick([7000, 10000, 6000]); }
+      else if (st.id === 'p1') { v = pick([2, 1, 3]); }
+      else if (st.id === 'p2') { v = pick([8, 7, 15]); }
+      else if (st.id === 'p3') { v = pick([29, 30, 31]); }
+      else { v = pick([0, 27, 9]); }
       await page.fill('#num', String(v));
       await page.click('#go');
     }
@@ -228,6 +228,22 @@ function checkRun(r, problems) {
   }
   if (!(d.age >= 18 && d.age <= 70)) { problems.push(tag + 'age out of range'); }
   if (!(d.anchorAmount >= 5000 && d.anchorAmount <= 100000)) { problems.push(tag + 'anchorAmount out of range'); }
+  // Puzzle scores must match the answers: [gut answer, correct answer] per item
+  var key = { p1: [1, 2], p2: [7, 8], p3: [30, 29], p4: [27, 0] };
+  var t1 = 0;
+  var ok = 0;
+  for (var pk in key) {
+    if (Number(d[pk]) === key[pk][0]) { t1 += 1; }
+    if (Number(d[pk]) === key[pk][1]) { ok += 1; }
+  }
+  if (d.p5 === 'Priya has a savings account and invests in a SIP every month') { t1 += 1; }
+  if (d.p5 === 'Priya has a savings account') { ok += 1; }
+  if (d.type1Score !== t1 || d.correctScore !== ok) { problems.push(tag + 'puzzle scores do not match answers'); }
+  // The first single step after the About screen must be the classic pair named by flipOrder
+  var firstFlip = taps.filter(function (x) { return x.step === 'flipNear' || x.step === 'flipFar'; })[0];
+  var wantFirst = 'flipNear';
+  if (d.flipOrder === 'farFirst') { wantFirst = 'flipFar'; }
+  if (['nearFirst', 'farFirst'].indexOf(d.flipOrder) === -1 || !firstFlip || firstFlip.step !== wantFirst) { problems.push(tag + 'classic pair order does not match flipOrder'); }
   if (!(d.type1Score >= 0 && d.type1Score <= 5 && d.correctScore >= 0 && d.type1Score + d.correctScore <= 5)) { problems.push(tag + 'bad puzzle scores'); }
   for (var p = 1; p < r.pcts.length; p++) {
     if (r.pcts[p] < r.pcts[p - 1]) { problems.push(tag + 'progress went backwards ' + r.pcts[p - 1] + ' -> ' + r.pcts[p]); break; }
@@ -362,7 +378,7 @@ async function main() {
 
   for (var i = 0; i < results.length; i++) { checkRun(results[i], problems); }
   var lines = [];
-  var groups = { order: {}, nudgeGroup: {}, anchorGroup: {} };
+  var groups = { order: {}, nudgeGroup: {}, anchorGroup: {}, flipOrder: {} };
   var posted = results.filter(function (r) { return r.posted; });
   for (var j = 0; j < posted.length; j++) {
     var gk = Object.keys(groups);
