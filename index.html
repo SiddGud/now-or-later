@@ -11,7 +11,7 @@
 :root{--bg:#fafaf9;--card:#fff;--ink:#1c1b1a;--muted:#6b6862;--line:#e4e2de;--line2:#cfccc6;--sel:#f2f1ee;--acc:#1c1b1a}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background-color:var(--bg);background-image:radial-gradient(#d9d6d0 1px,transparent 1.2px);background-size:18px 18px;background-attachment:fixed;color:var(--ink);overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
 button{font-family:inherit;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 button:focus-visible,.chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .wrap{max-width:460px;margin:0 auto;padding:max(12px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
@@ -20,7 +20,7 @@ button:focus-visible,.chip:focus-visible{outline:2px solid var(--ink);outline-of
 .bar{flex:1;height:3px;background:var(--line);overflow:hidden}
 .fill{height:100%;width:0;background:var(--ink);transition:width .25s ease}
 .pct{font-size:12px;color:var(--muted);min-width:32px;text-align:right;font-variant-numeric:tabular-nums}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:24px 20px 20px}
+.card{background:var(--card);border:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.03);border-radius:8px;padding:24px 20px 20px}
 .swap{animation:none}
 @media (prefers-reduced-motion:reduce){.fill{transition:none}}
 h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:30px;margin:0 0 10px;line-height:1.15}
