@@ -169,7 +169,7 @@ function buildSteps() {
   s.push(choice('flipNear', 'Which would you rather get?', ['₹1000 today', '₹1100 in 1 week']));
   var first = ORDER.charAt(0);
   var second = ORDER.charAt(1);
-  s.push({ type: 'intro', tag: 'Part 1 of 2', title: 'Quick choices', text: 'Pick the option you prefer each time. Imagine every payment is real and guaranteed. About 2 minutes.' });
+  s.push({ type: 'intro', tag: 'Part 1 of 2', title: 'Quick choices', text: 'Pick the option you prefer each time. Imagine every payment is real and guaranteed. You can\'t go back to change an answer. About 2 minutes.' });
   s = s.concat(block(first));
   s.push({ type: 'intro', tag: 'Part 2 of 2', title: 'Same idea, different dates', text: 'Halfway there! Same kind of choices, just shifted in time.' });
   s = s.concat(block(second));
