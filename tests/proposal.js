@@ -172,6 +172,21 @@ function checkRun(r, problems) {
   var posted = results.filter(function (r) { return r.posted; });
   console.log('Runs: ' + results.length + ', posted: ' + posted.length + ', fields: ' + (posted.length && Object.keys(posted[0].posted).length) + ', time: ' + Math.round((Date.now() - started) / 1000) + 's');
   console.log('flipOrder: ' + JSON.stringify(orders));
+  // Optional: save the posted rows as a CSV (marked as non-test) to try the analysis script
+  if (process.env.SAVE_CSV) {
+    var cols = Object.keys(posted[0].posted);
+    var out = [cols.join(',')];
+    for (var r = 0; r < posted.length; r++) {
+      var row = posted[r].posted;
+      row.test = 'no';
+      row.receivedAt = new Date().toISOString();
+      if (cols.indexOf('receivedAt') === -1) { cols.push('receivedAt'); out[0] = cols.join(','); }
+      var cells = [];
+      for (var c = 0; c < cols.length; c++) { cells.push('"' + String(row[cols[c]]).replace(/"/g, '""') + '"'); }
+      out.push(cells.join(','));
+    }
+    fs.writeFileSync(process.env.SAVE_CSV, out.join('\n'));
+  }
   if (problems.length) {
     console.log('\nFAILED (' + problems.length + '):');
     for (var p = 0; p < Math.min(problems.length, 30); p++) { console.log(' - ' + problems[p]); }
