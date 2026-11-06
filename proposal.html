@@ -270,7 +270,7 @@ function chips(containerId, key, options) {
 function renderAbout() {
   app.innerHTML =
     '<div class="card"><span class="tag">About you · 20 sec</span>' +
-    '<div class="q">Your age</div><input type="number" id="age" inputmode="numeric" placeholder="e.g. 20">' +
+    '<div class="q">Your age</div><input type="text" id="age" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="e.g. 20">' +
     '<div class="q">Academic year</div><div class="row" id="c_year"></div>' +
     '<div class="q">Field of study</div><div class="row" id="c_field"></div>' +
     '<div class="err" id="err"></div><button class="btn" id="go" disabled>Next</button></div>';
@@ -279,7 +279,7 @@ function renderAbout() {
   document.getElementById('age').oninput = checkAbout;
   document.getElementById('go').onclick = function () {
     if (!claim()) { return; }
-    data.age = Number(document.getElementById('age').value);
+    data.age = Number(document.getElementById('age').value.trim());
     next();
   };
 }
@@ -288,11 +288,12 @@ function renderAbout() {
 function checkAbout() {
   var ageEl = document.getElementById('age');
   if (!ageEl) { return; }
-  var age = Number(ageEl.value);
-  var ageOk = ageEl.value !== '' && Math.floor(age) === age && age >= 18 && age <= 70;
+  var ageRaw = ageEl.value.trim();
+  var age = Number(ageRaw);
+  var ageOk = ageRaw !== '' && Math.floor(age) === age && age >= 18 && age <= 70;
   var ok = ageOk && data.year && data.field;
   var err = '';
-  if (ageEl.value !== '' && !ageOk) { err = 'Age must be a whole number between 18 and 70.'; }
+  if (ageRaw !== '' && !ageOk) { err = 'Age must be a whole number between 18 and 70.'; }
   document.getElementById('err').textContent = err;
   document.getElementById('go').disabled = !ok;
 }
@@ -427,20 +428,22 @@ function startAdaptive(t) {
 }
 
 function renderNumber(s) {
-  app.innerHTML = '<div class="card"><h2>' + s.title + '</h2><input type="number" id="num" inputmode="decimal" placeholder="' + s.placeholder + '"><div class="err" id="err"></div><button class="btn" id="go" disabled>Next</button></div>';
+  app.innerHTML = '<div class="card"><h2>' + s.title + '</h2><input type="text" id="num" inputmode="decimal" autocomplete="off" placeholder="' + s.placeholder + '"><div class="err" id="err"></div><button class="btn" id="go" disabled>Next</button></div>';
   var el = document.getElementById('num');
   el.focus();
   el.oninput = function () {
-    var v = Number(el.value);
-    var ok = el.value !== '' && v >= s.min && v <= s.max;
+    // Text box with a number keypad: ignore spaces, accept only a plain number
+    var raw = el.value.trim();
+    var v = Number(raw);
+    var ok = raw !== '' && v >= s.min && v <= s.max;
     var msg = '';
-    if (el.value !== '' && !ok) { msg = 'Please enter a number between ' + s.min.toLocaleString('en-IN') + ' and ' + s.max.toLocaleString('en-IN') + '.'; }
+    if (raw !== '' && !ok) { msg = 'Please enter a number between ' + s.min.toLocaleString('en-IN') + ' and ' + s.max.toLocaleString('en-IN') + '.'; }
     document.getElementById('err').textContent = msg;
     document.getElementById('go').disabled = !ok;
   };
   document.getElementById('go').onclick = function () {
     if (!claim()) { return; }
-    data[s.id] = Number(el.value);
+    data[s.id] = Number(el.value.trim());
     data[s.id + '_rt'] = rt();
     trials.push({ step: s.id, value: data[s.id], rt: data[s.id + '_rt'] });
     next();
