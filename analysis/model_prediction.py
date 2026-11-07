@@ -57,9 +57,17 @@ def beta_for(p, ctx):
     return p["beta"]
 
 
+# Real-world noise settings: NOISE scales the choice noise, SLIP is the chance of a random tap
+NOISE = 1.0
+SLIP = 0.0
+
+
 def choose_later(gain_sooner_pv, gain_later_pv, scale):
+    # A slip: the person taps either option at random
+    if SLIP > 0 and RNG.random() < SLIP:
+        return RNG.random() < 0.5
     # Noisy choice: probability of the later option rises with its advantage
-    x = (gain_later_pv - gain_sooner_pv) / scale
+    x = (gain_later_pv - gain_sooner_pv) / (scale * NOISE)
     return RNG.random() < 1.0 / (1.0 + np.exp(-x))
 
 
