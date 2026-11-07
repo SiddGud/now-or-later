@@ -9,10 +9,11 @@ Usage:
 
 Assumptions (all stated, change them below):
 - Present bias: beta ~ Normal(0.85, 0.10), clipped to [0.5, 1.05].
-- Patience: the 30-vs-60-day gain switch point is lognormal with median Rs 600 (k about 0.0067/day).
+- Patience: the 30-vs-60-day gain switch point is Rs 500 plus a lognormal extra (median Rs 100, so k about 0.0067/day).
 - Sign effect: fines are discounted at a quarter of the gain rate (Thaler 1981).
 - Self vs other: for a friend, k is 0.8 x own and beta is halfway to 1 (Albrecht et al. 2011).
 - Health as a gain (headache-free days, main survey): k is 1.5 x money; as a cost (flu, proposal): like fines.
+- Domain-specific patience (Chapman 1996): each person's k per context is scaled by a lognormal factor (sd 0.3 for a friend, 1.2 for fines and health).
 - Each choice has noise: logistic with a scale of 3% of the amounts involved.
 """
 import numpy as np
@@ -27,16 +28,26 @@ TRIALS = 6
 
 def person():
     beta = float(np.clip(RNG.normal(0.85, 0.10), 0.5, 1.05))
-    ind_b = float(np.exp(RNG.normal(np.log(600), 0.25)))
+    # Extra amount needed to wait 30 more days: always positive, median Rs 100
+    ind_b = 500.0 + float(np.exp(RNG.normal(np.log(100), 0.6)))
     # Daily discount factor from the 30-vs-60 gain switch point: 500 = delta^30 * ind_b
     d30 = 500.0 / ind_b
-    return {"beta": beta, "d30": d30}
+    # Patience is domain-specific (Chapman 1996): each context gets its own personal multiplier on k
+    m = {}
+    # Money for a friend stays close to own money; fines and health vary much more on their own
+    spread = {"gain": 0.0, "friend": 0.3, "loss": 1.2, "health_gain": 1.2, "health_cost": 1.2}
+    for ctx in spread:
+        m[ctx] = float(np.exp(RNG.normal(0.0, spread[ctx])))
+    m["gain"] = 1.0
+    return {"beta": beta, "d30": d30, "m": m}
 
 
 def d30_for(p, ctx):
     # 30-day discount factor per context, from k multipliers
     k = 1.0 / p["d30"] - 1.0
     mult = {"gain": 1.0, "friend": 0.8, "loss": 0.25, "health_gain": 1.5, "health_cost": 0.25}[ctx]
+    if "m" in p:
+        mult = mult * p["m"][ctx]
     return 1.0 / (1.0 + mult * k)
 
 

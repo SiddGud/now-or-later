@@ -30,6 +30,8 @@ FRAMES = ["A", "B"]
 # Sooner amount V for each context (health in days)
 # Which question version to analyse; set from the command line
 KEEP = "all"
+# True with --bench: analyse only the lab benchmark plays
+BENCH = False
 V = {"gain": 500, "loss": 500, "health": 20, "friend": 500}
 # Validated categorical slots 1-4 (dataviz reference palette), fixed per context
 COLORS = {"gain": "#2a78d6", "loss": "#eb6834", "health": "#1baf7a", "friend": "#eda100"}
@@ -90,10 +92,17 @@ def load(path):
     before = len(df)
     df = df.drop_duplicates("id", keep="first")
     say("Duplicate ids removed: %d" % (before - len(df)))
-    if "test" in df.columns:
-        n_test = int((df["test"] == "yes").sum())
-        df = df[df["test"] != "yes"]
-        say("Test plays (#test) removed: %d" % n_test)
+    if "test" not in df.columns:
+        df["test"] = "no"
+    df["test"] = df["test"].fillna("no").replace("", "no")
+    if BENCH:
+        # Benchmark mode: only the lab plays made with the rule cards (#bench)
+        df = df[df["test"] == "bench"]
+        say("Benchmark mode: keeping only #bench plays: %d" % len(df))
+    else:
+        n_test = int((df["test"] != "no").sum())
+        df = df[df["test"] == "no"]
+        say("Test and benchmark plays (#test, #bench) removed: %d" % n_test)
     # Rows from the short proposal survey (proposal.html) are analysed by analyze_proposal.py
     if "survey" in df.columns:
         n_prop = int((df["survey"] == "proposal").sum())
@@ -176,7 +185,11 @@ def exclusions(df):
     say("Careless (3+ of 5 warning signs): %d, of whom %d failed an attention check and %d passed both"
         % (len(careless), int((careless["attentionFail"] == "yes").sum()), int((careless["attentionFail"] != "yes").sum())))
     say("  ids: %s" % ", ".join(careless["id"].astype(str)))
-    df = df[df["carelessFlags"] < 3]
+    if BENCH:
+        # Benchmark plays follow rule cards, so speed-based careless flags do not apply
+        say("Benchmark mode: careless screen not applied")
+    else:
+        df = df[df["carelessFlags"] < 3]
     say("Kept despite failing an attention check: %d" % int((df["attentionFail"] == "yes").sum()))
     say("Main sample: %d" % len(df))
     strict = df[df["attentionFail"] != "yes"]
@@ -603,7 +616,10 @@ def main():
         print(__doc__)
         sys.exit(1)
     os.makedirs(OUT, exist_ok=True)
-    global KEEP
+    global KEEP, BENCH
+    if "--bench" in sys.argv:
+        BENCH = True
+        sys.argv.remove("--bench")
     # Rupee signs must print on any console
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     if len(sys.argv) > 2:

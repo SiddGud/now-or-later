@@ -95,11 +95,14 @@ if (Math.random() < 0.5) { FLIP = 'farFirst'; }
 // All answers go here. survey = 'proposal' keeps these rows apart from the main survey in the Sheet
 var data = { id: RID, survey: 'proposal', flipOrder: FLIP, startedAt: new Date().toISOString() };
 // Marks test plays (#test) so they can be filtered out of the Sheet
-var TEST_MODE = location.hash === '#test';
+// #bench marks the lab benchmark plays (rule cards), kept apart from real data
+var BENCH = location.hash === '#bench';
+var TEST_MODE = location.hash === '#test' || BENCH;
 data.test = 'no';
 // Version of this short survey
 data.version = 'p1';
 if (TEST_MODE) { data.test = 'yes'; }
+if (BENCH) { data.test = 'bench'; }
 // Optional answer, kept as an empty column when skipped
 // Every single tap, with its response time
 var trials = [];
