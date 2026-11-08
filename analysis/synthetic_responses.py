@@ -12,7 +12,7 @@ and proposal.html, and gets a response time for every tap:
 - single choices 3 to 8 s, typed answers 8 to 30 s, puzzles 15 to 45 s.
 
 Usage:
-    py analysis/synthetic_responses.py real_responses.csv out_folder
+    py analysis/synthetic_responses.py real_responses.csv out_folder [people per form, default 50]
 """
 import json
 import math
@@ -289,7 +289,10 @@ def main():
     if len(sys.argv) < 3:
         print(__doc__)
         sys.exit(1)
+    global N
     real_path, out = sys.argv[1], sys.argv[2]
+    if len(sys.argv) > 3:
+        N = int(sys.argv[3])
     os.makedirs(out, exist_ok=True)
     cols = list(pd.read_csv(real_path, nrows=1).columns)
     main_rows, prop_rows, tap_rows = [], [], []
@@ -308,14 +311,14 @@ def main():
         if c not in cols:
             cols.append(c)
     syn = syn.reindex(columns=cols)
-    syn.to_csv(os.path.join(out, "synthetic_50_per_form.csv"), index=False)
+    syn.to_csv(os.path.join(out, "synthetic_%d_per_form.csv" % N), index=False)
     real = pd.read_csv(real_path)
     pd.concat([real, syn], ignore_index=True).reindex(columns=cols).to_csv(os.path.join(out, "real_plus_synthetic.csv"), index=False)
     taps_df = pd.DataFrame(tap_rows)
     with pd.ExcelWriter(os.path.join(out, "synthetic_responses.xlsx"), engine="openpyxl") as xw:
         pd.DataFrame({"Read me": [
             "SYNTHETIC test respondents requested for a model check. Not research data.",
-            "50 people per form. Ids SYN001-SYN050 (main survey) and SYNP001-SYNP050 (short survey). Every row has test = synthetic.",
+            "%d people per form. Ids SYN001... (main survey) and SYNP001... (short survey). Every row has test = synthetic." % N,
             "Sheet 'Every answer': each tap in order, with the offer shown, the choice and the response time in ms.",
             "Sheets 'Main survey rows' / 'Short survey rows': one row per person, same columns as the Google Sheet.",
             "Model: beta-delta discounting with a mix of people: main survey 62% present-biased (beta ~ 0.74), 30% consistent (~0.98), 8% future-biased (~1.06); short survey 50 / 30 / 20%; fines k x 0.25 (Thaler 1981); friend k x 0.6, beta halfway to 1 (Albrecht et al. 2011);",
