@@ -244,9 +244,17 @@ def expected_cell(stat, vals):
 
 def build(name, sim_fn, stat_fn, real, bench):
     runs = []
+    combined = []
+    # Columns the statistics use, so real and simulated rows can be stacked for the projection
+    keep = None
+    if real is not None and len(real) >= 5:
+        sample = pd.DataFrame([sim_fn(M.person())])
+        keep = list(sample.columns)
     for _ in range(REPEATS):
-        people = [sim_fn(M.person()) for _ in range(N_PEOPLE)]
-        runs.append(stat_fn(pd.DataFrame(people)))
+        sim = pd.DataFrame([sim_fn(M.person()) for _ in range(N_PEOPLE)])
+        runs.append(stat_fn(sim))
+        if keep is not None:
+            combined.append(stat_fn(pd.concat([real[keep], sim[keep]], ignore_index=True)))
     real_s = {}
     if real is not None and len(real) >= 5:
         real_s = stat_fn(real)
@@ -263,10 +271,14 @@ def build(name, sim_fn, stat_fn, real, bench):
         bench_v = "n/a"
         if bench_s:
             bench_v = fmt(stat, bench_s[stat])
+        comb_v = "not enough real responses yet"
+        if combined:
+            comb_v = expected_cell(stat, [r[stat] for r in combined])
         rows.append({"Statistic": stat,
                      "Expected with real-world noise (50 people)": expected_cell(stat, [r[stat] for r in runs]),
                      "Your real data till now": real_v,
-                     "Model benchmark, no noise (50 rule cards)": bench_v})
+                     "Model benchmark, no noise (50 rule cards)": bench_v,
+                     "Projection: your real data + 50 model people (not data)": comb_v})
     print("built", name)
     return pd.DataFrame(rows)
 
@@ -294,6 +306,7 @@ def main():
         "Expected column: median across simulated studies, [5th to 95th percentile]. For p values: median p and how often p < .05.",
         "Your real data: main survey main sample (careless-response screen applied); short survey after the dominance check.",
         "Model benchmark: the 50 rule cards played exactly through both live surveys (#bench links).",
+        "Projection column: your real respondents plus 50 simulated model people, recomputed %d times. A what-if, never to be reported as data." % REPEATS,
         "Simulated and benchmark rows are not research data."]})
     with pd.ExcelWriter(out, engine="openpyxl") as xw:
         main_t.to_excel(xw, sheet_name="Main survey", index=False)
