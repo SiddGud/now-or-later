@@ -32,6 +32,8 @@ FRAMES = ["A", "B"]
 KEEP = "all"
 # True with --bench: analyse only the lab benchmark plays
 BENCH = False
+# True with --with-synthetic: real responses plus the synthetic test respondents
+SYNTH = False
 V = {"gain": 500, "loss": 500, "health": 20, "friend": 500}
 # Validated categorical slots 1-4 (dataviz reference palette), fixed per context
 COLORS = {"gain": "#2a78d6", "loss": "#eb6834", "health": "#1baf7a", "friend": "#eda100"}
@@ -99,10 +101,14 @@ def load(path):
         # Benchmark mode: only the lab plays made with the rule cards (#bench)
         df = df[df["test"] == "bench"]
         say("Benchmark mode: keeping only #bench plays: %d" % len(df))
+    elif SYNTH:
+        # Real responses plus the synthetic test respondents (ids SYN...)
+        df = df[df["test"].isin(["no", "synthetic"])]
+        say("With synthetic respondents: %d real + %d synthetic" % (int((df["test"] == "no").sum()), int((df["test"] == "synthetic").sum())))
     else:
         n_test = int((df["test"] != "no").sum())
         df = df[df["test"] == "no"]
-        say("Test and benchmark plays (#test, #bench) removed: %d" % n_test)
+        say("Test, benchmark and synthetic rows removed: %d" % n_test)
     # Rows from the short proposal survey (proposal.html) are analysed by analyze_proposal.py
     if "survey" in df.columns:
         n_prop = int((df["survey"] == "proposal").sum())
@@ -616,7 +622,10 @@ def main():
         print(__doc__)
         sys.exit(1)
     os.makedirs(OUT, exist_ok=True)
-    global KEEP, BENCH
+    global KEEP, BENCH, SYNTH
+    if "--with-synthetic" in sys.argv:
+        SYNTH = True
+        sys.argv.remove("--with-synthetic")
     if "--bench" in sys.argv:
         BENCH = True
         sys.argv.remove("--bench")

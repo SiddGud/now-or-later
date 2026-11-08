@@ -40,12 +40,12 @@ def holm(p):
 
 
 def main():
-    if len([a for a in sys.argv[1:] if a != "--bench"]) < 1:
+    if len([a for a in sys.argv[1:] if not a.startswith("--")]) < 1:
         print(__doc__)
         sys.exit(1)
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     os.makedirs(OUT, exist_ok=True)
-    df = pd.read_csv([a for a in sys.argv[1:] if a != "--bench"][0])
+    df = pd.read_csv([a for a in sys.argv[1:] if not a.startswith("--")][0])
     if "survey" not in df.columns:
         say("No proposal-survey rows yet.")
         sys.exit(1)
@@ -56,6 +56,10 @@ def main():
         # Benchmark mode: only the lab plays made with the rule cards (#bench)
         df = df[df["test"] == "bench"]
         say("Benchmark mode: only #bench plays")
+    elif "--with-synthetic" in sys.argv:
+        # Real responses plus the synthetic test respondents (ids SYNP...)
+        df = df[df["test"].isin(["no", "synthetic"])]
+        say("With synthetic respondents")
     else:
         df = df[df["test"] == "no"]
     say("Proposal-survey responses: %d" % len(df))
