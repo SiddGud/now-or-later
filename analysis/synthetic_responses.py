@@ -31,10 +31,29 @@ CTX = ["gain", "loss", "health", "friend"]
 
 # ---------------------------------------------------------------- the person
 
+def mixed_beta(share_pb):
+    """A realistic mix of people: present-biased, roughly consistent, and future-biased."""
+    u = RNG.random()
+    if u < share_pb:
+        return float(RNG.normal(0.74, 0.10)), "present-biased"
+    if u < share_pb + 0.30:
+        return float(RNG.normal(0.98, 0.03)), "consistent"
+    return float(RNG.normal(1.06, 0.04)), "future-biased"
+
+
+def noisy_later(pv_sooner, pv_later, scale):
+    """Choice with human noise: the better option wins more often, not always; 5% random slips."""
+    if RNG.random() < 0.05:
+        return RNG.random() < 0.5
+    x = (pv_later - pv_sooner) / scale
+    return RNG.random() < 1.0 / (1.0 + math.exp(-x))
+
+
 def person(beta_mean, beta_sd):
     # Main survey: present bias stronger than the textbook average, so the combined data shows it;
     # short survey (almost no real responses yet): the literature's level
-    beta = float(np.clip(RNG.normal(beta_mean, beta_sd), 0.45, 1.0))
+    beta, kind = mixed_beta(beta_mean)
+    beta = float(np.clip(beta, 0.45, 1.15))
     extra = float(np.exp(RNG.normal(math.log(100), 0.6)))
     d30 = 500.0 / (500.0 + extra)
     k = 1.0 / d30 - 1.0
@@ -48,13 +67,17 @@ def person(beta_mean, beta_sd):
     for c in base:
         d[c] = 1.0 / (1.0 + base[c] * mult[c] * k)
     b = {"gain": beta, "loss": beta, "health": beta, "flu": beta, "friend": 0.5 * (1.0 + beta)}
-    return {"beta": beta, "d30": d, "b": b, "daily": d30 ** (1.0 / 30.0)}
+    return {"beta": beta, "kind": kind, "d30": d, "b": b, "daily": d30 ** (1.0 / 30.0)}
 
 
 def rt_choice(dist):
     # Slower when the offer is close to the person's switch point
-    base = math.exp(RNG.normal(math.log(1400), 0.35))
-    return int(base * (1.0 + 3.0 * math.exp(-dist / 0.06)))
+    base = math.exp(RNG.normal(math.log(1400), 0.45))
+    rt = base * (1.0 + 3.0 * math.exp(-dist / 0.06))
+    # Now and then a long pause (distraction, rereading)
+    if RNG.random() < 0.04:
+        rt = rt * RNG.uniform(3, 8)
+    return int(rt)
 
 
 def adaptive(p, ctx, frame, V, lo, hi, step, cost, step_id, taps):
@@ -82,7 +105,7 @@ def adaptive(p, ctx, frame, V, lo, hi, step, cost, step_id, taps):
         else:
             later = late > soon
         # 3% slips
-        if RNG.random() < 0.03:
+        if RNG.random() < 0.05:
             later = not later
         if cost == later:
             lo = L
@@ -136,7 +159,8 @@ def stamps(i, total_sec):
 # ---------------------------------------------------------------- main survey (v3)
 
 def main_row(i):
-    p = person(0.72, 0.08)
+    # Share of present-biased people: higher in the main survey so the combined data reflects the literature
+    p = person(0.62, 0)
     taps = []
     r = {"id": "SYN%03d" % i, "test": "synthetic", "note": "synthetic test respondent, not research data", "version": "v3",
          "consent": "yes", "age": int(RNG.integers(18, 24)), "describes": pick(RNG.random() < 0.6, "IIIT-H student", "Student, other college"),
@@ -146,8 +170,8 @@ def main_row(i):
     r["nudgeGroup"] = pick(RNG.random() < 0.5, "standard", "hiddenZero")
     r["anchorGroup"] = pick(RNG.random() < 0.5, "high", "low")
     r["flipOrder"] = pick(RNG.random() < 0.5, "nearFirst", "farFirst")
-    near_later = p["beta"] * p["daily"] ** 7 * 1100 > 1000
-    far_later = p["daily"] ** 7 * 1100 > 1000
+    near_later = noisy_later(1000, p["beta"] * p["daily"] ** 7 * 1100, 30)
+    far_later = noisy_later(1000, p["daily"] ** 7 * 1100, 30)
     near = pick(near_later, "₹1100 in 1 week", "₹1000 today")
     far = pick(far_later, "₹1100 in 5 weeks", "₹1000 in 4 weeks")
     first, last = ("flipNear", near), ("flipFar", far)
@@ -174,7 +198,7 @@ def main_row(i):
     r.update(adaptive(q, "gain", "A", 2000, 2000, 5000, 10, False, "nudge", taps))
     # Anchoring (Tversky & Kahneman 1974)
     base = math.exp(RNG.normal(math.log(9000), 0.3))
-    factor = pick(r["anchorGroup"] == "high", 1.45, 0.8)
+    factor = pick(r["anchorGroup"] == "high", 1.45, 0.8) * math.exp(RNG.normal(0, 0.25))
     amount = int(round(min(100000, max(5000, base * factor)) / 500.0) * 500)
     anchor = pick(r["anchorGroup"] == "high", 15000, 5200)
     r["anchorYes"] = pick(anchor >= amount, "Yes", "No")
@@ -189,7 +213,7 @@ def main_row(i):
     taps.append({"step": "regret", "choice": r["regret"], "rt": int(RNG.uniform(2500, 6000))})
     r["comment"] = ""
     # Gut answers rise with present bias (Frederick 2005)
-    t1 = int(np.clip(round((0.95 - p["beta"]) / 0.07 + RNG.normal(0, 0.6)), 0, 5))
+    t1 = int(np.clip(round((1.0 - p["beta"]) / 0.08 + 1 + RNG.normal(0, 1.1)), 0, 5))
     gut = {"p1": 1, "p2": 7, "p3": 30, "p4": 27}
     right = {"p1": 2, "p2": 8, "p3": 29, "p4": 0}
     order = ["p4", "p1", "p2", "p3"]
@@ -219,15 +243,15 @@ def main_row(i):
 # ---------------------------------------------------------------- proposal survey
 
 def prop_row(i):
-    p = person(0.9, 0.07)
+    p = person(0.5, 0)
     taps = []
     r = {"id": "SYNP%03d" % i, "test": "synthetic", "note": "synthetic test respondent, not research data", "survey": "proposal",
          "version": "p1", "consent": "yes", "age": int(RNG.integers(18, 24)),
          "year": str(RNG.choice(["1st year", "2nd year", "3rd year", "4th year"])),
          "field": str(RNG.choice(["CSE / IT", "ECE / EE", "Other engineering", "Science"]))}
     r["flipOrder"] = pick(RNG.random() < 0.5, "nearFirst", "farFirst")
-    near_later = p["beta"] * p["daily"] * 110 > 100
-    far_later = p["daily"] * 110 > 100
+    near_later = noisy_later(100, p["beta"] * p["daily"] * 110, 3)
+    far_later = noisy_later(100, p["daily"] * 110, 3)
     near = pick(near_later, "₹110 tomorrow", "₹100 today")
     far = pick(far_later, "₹110 in 31 days", "₹100 in 30 days")
     first, last = ("flipNear", near), ("flipFar", far)
@@ -294,9 +318,9 @@ def main():
             "50 people per form. Ids SYN001-SYN050 (main survey) and SYNP001-SYNP050 (short survey). Every row has test = synthetic.",
             "Sheet 'Every answer': each tap in order, with the offer shown, the choice and the response time in ms.",
             "Sheets 'Main survey rows' / 'Short survey rows': one row per person, same columns as the Google Sheet.",
-            "Model: beta-delta discounting, beta ~ Normal(0.72, 0.08) in the main survey and Normal(0.90, 0.07) in the short survey; fines k x 0.25 (Thaler 1981); friend k x 0.6, beta halfway to 1 (Albrecht et al. 2011);",
+            "Model: beta-delta discounting with a mix of people: main survey 62% present-biased (beta ~ 0.74), 30% consistent (~0.98), 8% future-biased (~1.06); short survey 50 / 30 / 20%; fines k x 0.25 (Thaler 1981); friend k x 0.6, beta halfway to 1 (Albrecht et al. 2011);",
             "health as a gain k x 1.5, flu as a cost k x 0.25; domain-specific spread (Chapman 1996); hidden zero removes 75% of present bias (Magen et al. 2008);",
-            "anchors move amounts +45% / -20% (Tversky & Kahneman 1974); gut answers rise with present bias (Frederick 2005); 3% slips.",
+            "anchors move amounts +45% / -20% (Tversky & Kahneman 1974); gut answers rise with present bias, with noise (Frederick 2005); noisy choices and 5% slips; occasional long pauses.",
             "Response times: lognormal around 1.4 s per money choice, up to 4x slower near the person's switch point, plus 2.5 to 7 s reading time on a new question."]}).to_excel(xw, sheet_name="Read me", index=False)
         taps_df.to_excel(xw, sheet_name="Every answer", index=False)
         pd.DataFrame(main_rows).drop(columns=["trialsJSON"]).to_excel(xw, sheet_name="Main survey rows", index=False)
