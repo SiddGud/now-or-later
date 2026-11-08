@@ -171,8 +171,9 @@ def main_row(i):
     r["nudgeGroup"] = pick(RNG.random() < 0.5, "standard", "hiddenZero")
     r["anchorGroup"] = pick(RNG.random() < 0.5, "high", "low")
     r["flipOrder"] = pick(RNG.random() < 0.5, "nearFirst", "farFirst")
-    near_later = noisy_later(1000, p["beta"] * p["daily"] ** 7 * 1100, 30)
-    far_later = noisy_later(1000, p["daily"] ** 7 * 1100, 30)
+    # Wide noise: real people disagree a lot on these one-off choices
+    near_later = noisy_later(1000, p["beta"] * p["daily"] ** 7 * 1100, 50)
+    far_later = noisy_later(1000, p["daily"] ** 7 * 1100, 50)
     near = pick(near_later, "₹1100 in 1 week", "₹1000 today")
     far = pick(far_later, "₹1100 in 5 weeks", "₹1000 in 4 weeks")
     first, last = ("flipNear", near), ("flipFar", far)
@@ -254,8 +255,9 @@ def prop_row(i):
          "year": str(RNG.choice(["1st year", "2nd year", "3rd year", "4th year"])),
          "field": str(RNG.choice(["CSE / IT", "ECE / EE", "Other engineering", "Science"]))}
     r["flipOrder"] = pick(RNG.random() < 0.5, "nearFirst", "farFirst")
-    near_later = noisy_later(100, p["beta"] * p["daily"] * 110, 3)
-    far_later = noisy_later(100, p["daily"] * 110, 3)
+    # Wide noise: real people disagree a lot on these one-off choices
+    near_later = noisy_later(100, p["beta"] * p["daily"] * 110, 10)
+    far_later = noisy_later(100, p["daily"] * 110, 10)
     near = pick(near_later, "₹110 tomorrow", "₹100 today")
     far = pick(far_later, "₹110 in 31 days", "₹100 in 30 days")
     first, last = ("flipNear", near), ("flipFar", far)
