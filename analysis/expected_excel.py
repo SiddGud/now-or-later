@@ -17,7 +17,7 @@ import sys
 import numpy as np
 import pandas as pd
 from scipy import stats
-from openpyxl.styles import Font
+from openpyxl.styles import Alignment, Font
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import model_prediction as M
@@ -214,6 +214,52 @@ def load_prop(path, bench):
     return prepare_prop(df)
 
 
+# What published studies report for each statistic (direction and rough size; check the original papers before quoting numbers)
+LIT_MAIN = {
+    "People analysed": "Classic studies: tens to about a hundred students per study; Frederick (2005) about 3,000",
+    "Classic reversal (%)": "Common: many people pick 'today' in the near pair but wait in the far pair (Thaler 1981; Kirby & Herrnstein 1995). Size varies widely by stakes and delays",
+    "Reverse reversal (%)": "Less common than classic reversals, but documented ('future bias'; Sayman & Onculer 2009)",
+    "Classic vs reverse, McNemar p": "Classic reversals outnumber reverse ones",
+    "Median k, gain, block A": "Higher than block B: discounting is steeper when 'today' is an option (Thaler 1981)",
+    "Median k, loss, block A": "Lower than gains: the sign effect (Thaler 1981; Frederick, Loewenstein & O'Donoghue 2002)",
+    "Median k, health, block A": "Differs from money (Chapman 1996); gain-framed health is often discounted steeply",
+    "Median k, friend, block A": "Lower than for oneself: more patience when choosing for others (Albrecht et al. 2011)",
+    "Median k, gain, block B": "Lower than block A (present bias)",
+    "Median k, loss, block B": "Lower than gains (sign effect)",
+    "Median k, health, block B": "Differs from money (Chapman 1996)",
+    "Median k, friend, block B": "Lower than for oneself, smaller gap without 'today' (Albrecht et al. 2011)",
+    "People with k(A) > k(B), gain (%)": "A majority in early studies; beta about 0.7 to 0.9 (Laibson 1997); beta close to 1 with trusted money payments (Andreoni & Sprenger 2012)",
+    "Present bias, gain A vs B, Wilcoxon p": "Significant in classic studies; often weak or absent with trusted monetary payments (Andreoni & Sprenger 2012)",
+    "Contexts differ (block A), Friedman p": "Significant: discount rates differ across domains (Chapman 1996; Frederick et al. 2002)",
+    "Fine vs gain (block A), Wilcoxon p": "Significant: losses discounted less than gains (sign effect), one of the most replicated anomalies",
+    "Health vs gain (block A), Wilcoxon p": "Significant difference between health and money (Chapman 1996)",
+    "Friend vs self (block A), Wilcoxon p": "Usually significant but small; depends on social distance (Albrecht et al. 2011)",
+    "Spearman gain-fine (block B)": "Low to moderate across domains",
+    "Spearman gain-health (block B)": "Low, about 0.2 to 0.3 between money and health (Chapman 1996): patience is domain-specific",
+    "Spearman gain-friend (block B)": "High: both are money",
+    "Nudge: median k, plain wording": "Higher than with hidden zero",
+    "Nudge: median k, hidden zero": "Lower: spelling out 'and Rs 0 later' increases patience (Magen, Dweck & Gross 2008)",
+    "Nudge: hidden zero lower, one-sided p": "Significant in Magen et al. (2008); later replications smaller and mixed (e.g. Read et al. 2017)",
+    "Anchoring: median amount, high anchor (Rs)": "Higher than the low-anchor group (Tversky & Kahneman 1974; Ariely, Loewenstein & Prelec 2003)",
+    "Anchoring: median amount, low anchor (Rs)": "Lower than the high-anchor group",
+    "Anchoring: high > low, one-sided p": "Significant; anchoring replicated reliably in large replications (Many Labs, Klein et al. 2014)",
+    "Type 1: Spearman gut answers vs log k": "Positive but small: more gut answers go with more impatience (Frederick 2005)",
+}
+LIT_PROP = {
+    "People analysed": "Proposal planned about 50",
+    "Classic reversal (%)": "Proposal expected a third or more; the 'Rs 100 today vs Rs 110 tomorrow' pattern is the classic demonstration (Thaler 1981)",
+    "Reverse reversal (%)": "Less common than classic reversals",
+    "Median k, gain": "Reference context",
+    "Median k, loss": "Lower than gains (sign effect, Thaler 1981)",
+    "Median k, health": "Proposal predicted lower than gains; illness framed as a cost behaves more like a loss",
+    "Median k, friend": "Lower than for oneself (Albrecht et al. 2011)",
+    "Contexts differ, Friedman p": "Significant (Chapman 1996; Frederick et al. 2002)",
+    "Fine vs gain, Wilcoxon p": "Significant (sign effect)",
+    "Flu vs gain, Wilcoxon p": "Significant difference between health and money (Chapman 1996)",
+    "Spearman gain-flu": "Low, about 0.2 to 0.3 (Chapman 1996)",
+}
+
+
 # ---------------------------------------------------------------- workbook
 
 def fmt(stat, v):
@@ -242,7 +288,7 @@ def expected_cell(stat, vals):
     return "%s [%s to %s]" % (fmt(stat, float(np.median(vals))), fmt(stat, float(np.percentile(vals, 5))), fmt(stat, float(np.percentile(vals, 95))))
 
 
-def build(name, sim_fn, stat_fn, real, bench):
+def build(name, sim_fn, stat_fn, real, bench, lit):
     runs = []
     combined = []
     # Columns the statistics use, so real and simulated rows can be stacked for the projection
@@ -275,6 +321,7 @@ def build(name, sim_fn, stat_fn, real, bench):
         if combined:
             comb_v = expected_cell(stat, [r[stat] for r in combined])
         rows.append({"Statistic": stat,
+                     "What the research papers report": lit.get(stat, ""),
                      "Expected with real-world noise (50 people)": expected_cell(stat, [r[stat] for r in runs]),
                      "Your real data till now": real_v,
                      "Model benchmark, no noise (50 rule cards)": bench_v,
@@ -292,8 +339,8 @@ def main():
     # Real-world noise: 2.5x the textbook choice noise and 5% random slips
     M.NOISE = 2.5
     M.SLIP = 0.05
-    main_t = build("main", sim_main, main_stats, load_main(real_path, False), load_main(bench_path, True))
-    prop_t = build("proposal", sim_prop, prop_stats, load_prop(real_path, False), load_prop(bench_path, True))
+    main_t = build("main", sim_main, main_stats, load_main(real_path, False), load_main(bench_path, True), LIT_MAIN)
+    prop_t = build("proposal", sim_prop, prop_stats, load_prop(real_path, False), load_prop(bench_path, True), LIT_PROP)
     notes = pd.DataFrame({"Notes": [
         "Model: quasi-hyperbolic beta-delta discounting (Laibson 1997; McClure et al. 2004).",
         "Present bias beta ~ Normal(0.85, 0.10). 30-vs-60-day gain switch point = Rs 500 + lognormal extra (median Rs 100).",
@@ -307,6 +354,7 @@ def main():
         "Your real data: main survey main sample (careless-response screen applied); short survey after the dominance check.",
         "Model benchmark: the 50 rule cards played exactly through both live surveys (#bench links).",
         "Projection column: your real respondents plus 50 simulated model people, recomputed %d times. A what-if, never to be reported as data." % REPEATS,
+        "Research-papers column: direction and rough size of published findings, written from the literature; check each against the original paper before quoting exact numbers.",
         "Simulated and benchmark rows are not research data."]})
     with pd.ExcelWriter(out, engine="openpyxl") as xw:
         main_t.to_excel(xw, sheet_name="Main survey", index=False)
@@ -315,10 +363,14 @@ def main():
         for ws in xw.book.worksheets:
             for col in ws.columns:
                 width = max(len(str(c.value or "")) for c in col)
-                ws.column_dimensions[col[0].column_letter].width = min(70, width + 2)
+                ws.column_dimensions[col[0].column_letter].width = min(60, width + 2)
             for c in ws[1]:
                 c.font = Font(bold=True)
             ws.freeze_panes = "B2"
+            # Wrap long text so every cell stays readable
+            for row in ws.iter_rows(min_row=2):
+                for c in row:
+                    c.alignment = Alignment(wrap_text=True, vertical="top")
     print("Saved", out)
 
 
