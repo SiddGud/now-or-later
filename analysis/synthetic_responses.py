@@ -62,18 +62,19 @@ def person(beta_mean, beta_sd):
     for c in spread:
         mult[c] = float(np.exp(RNG.normal(0.0, spread[c])))
     # Literature effects on k: fines 1/4 (Thaler 1981), friend 0.6 (Albrecht et al. 2011), health as a gain 1.5, flu as a cost 1/4
-    base = {"gain": 1.0, "friend": 0.6, "loss": 0.25, "health": 1.5, "flu": 0.25}
+    # Project-statement effects strong (fines, health); friend only slightly more patient (no prior in the proposal)
+    base = {"gain": 1.0, "friend": 1.0, "loss": 0.25, "health": 1.5, "flu": 0.25}
     d = {}
     for c in base:
         d[c] = 1.0 / (1.0 + base[c] * mult[c] * k)
-    b = {"gain": beta, "loss": beta, "health": beta, "flu": beta, "friend": 0.5 * (1.0 + beta)}
+    b = {"gain": beta, "loss": beta, "health": beta, "flu": beta, "friend": beta}
     return {"beta": beta, "kind": kind, "d30": d, "b": b, "daily": d30 ** (1.0 / 30.0)}
 
 
 def rt_choice(dist):
     # Slower when the offer is close to the person's switch point
     base = math.exp(RNG.normal(math.log(1400), 0.45))
-    rt = base * (1.0 + 3.0 * math.exp(-dist / 0.06))
+    rt = base * (1.0 + 1.0 * math.exp(-dist / 0.06))
     # Now and then a long pause (distraction, rereading)
     if RNG.random() < 0.04:
         rt = rt * RNG.uniform(3, 8)
@@ -184,6 +185,9 @@ def main_row(i):
         for j, c in enumerate(ctxs):
             if j == 2:
                 attn = pick(frame == "A", ("attn1", "₹1000 today"), ("attn2", "₹100 in 30 days"))
+                # About 3% of people miss an attention check
+                if RNG.random() < 0.03:
+                    attn = pick(frame == "A", ("attn1", "₹10 in 60 days"), ("attn2", "₹5000 in 60 days"))
                 r[attn[0]] = attn[1]
                 r[attn[0] + "_rt"] = single(taps, attn[0], attn[1], 2500, 6000)
             if c == "health":
@@ -194,11 +198,11 @@ def main_row(i):
     q = dict(p)
     q["b"] = dict(p["b"])
     if r["nudgeGroup"] == "hiddenZero":
-        q["b"]["gain"] = p["beta"] + 0.75 * (1.0 - p["beta"])
+        q["b"]["gain"] = p["beta"] + 0.1 * (1.0 - p["beta"])
     r.update(adaptive(q, "gain", "A", 2000, 2000, 5000, 10, False, "nudge", taps))
     # Anchoring (Tversky & Kahneman 1974)
     base = math.exp(RNG.normal(math.log(9000), 0.3))
-    factor = pick(r["anchorGroup"] == "high", 1.45, 0.8) * math.exp(RNG.normal(0, 0.25))
+    factor = pick(r["anchorGroup"] == "high", 1.12, 0.94) * math.exp(RNG.normal(0, 0.35))
     amount = int(round(min(100000, max(5000, base * factor)) / 500.0) * 500)
     anchor = pick(r["anchorGroup"] == "high", 15000, 5200)
     r["anchorYes"] = pick(anchor >= amount, "Yes", "No")
@@ -213,7 +217,7 @@ def main_row(i):
     taps.append({"step": "regret", "choice": r["regret"], "rt": int(RNG.uniform(2500, 6000))})
     r["comment"] = ""
     # Gut answers rise with present bias (Frederick 2005)
-    t1 = int(np.clip(round((1.0 - p["beta"]) / 0.08 + 1 + RNG.normal(0, 1.1)), 0, 5))
+    t1 = int(np.clip(round((1.0 - p["beta"]) / 0.25 + 1.5 + RNG.normal(0, 1.3)), 0, 5))
     gut = {"p1": 1, "p2": 7, "p3": 30, "p4": 27}
     right = {"p1": 2, "p2": 8, "p3": 29, "p4": 0}
     order = ["p4", "p1", "p2", "p3"]
@@ -230,7 +234,7 @@ def main_row(i):
     r["type1Score"] = t1
     r["correctScore"] = 5 - t1
     r["flipped"] = pick(r["flipNear"] == "₹1000 today" and r["flipFar"] == "₹1100 in 5 weeks", "yes", "no")
-    r["attentionFail"] = "no"
+    r["attentionFail"] = pick(r.get("attn1") == "₹10 in 60 days" or r.get("attn2") == "₹5000 in 60 days", "yes", "no")
     total = int(sum(t["rt"] for t in taps) / 1000 + RNG.uniform(40, 90))
     r["startedAt"], r["finishedAt"] = stamps(i, total)
     r["receivedAt"] = r["finishedAt"]
@@ -262,8 +266,8 @@ def prop_row(i):
     ctxs = list(RNG.permutation(CTX))
     for j, c in enumerate(ctxs):
         if j == 2:
-            r["attn1"] = "₹1000 today"
-            r["attn1_rt"] = single(taps, "attn1", "₹1000 today", 2500, 6000)
+            r["attn1"] = pick(RNG.random() < 0.03, "₹10 in 60 days", "₹1000 today")
+            r["attn1_rt"] = single(taps, "attn1", r["attn1"], 2500, 6000)
         if c == "health":
             # Flu as a cost: like fines
             row = adaptive(p, "flu", "A", 10, 10, 25, 1, True, "A_health", taps)
@@ -275,7 +279,7 @@ def prop_row(i):
     r["upi"] = ""
     r["flipped"] = pick(r["flipNear"] == "₹100 today" and r["flipFar"] == "₹110 in 31 days", "yes", "no")
     r["reverseFlip"] = pick(r["flipNear"] == "₹110 tomorrow" and r["flipFar"] == "₹100 in 30 days", "yes", "no")
-    r["attentionFail"] = "no"
+    r["attentionFail"] = pick(r["attn1"] == "₹10 in 60 days", "yes", "no")
     total = int(sum(t["rt"] for t in taps) / 1000 + RNG.uniform(30, 60))
     r["startedAt"], r["finishedAt"] = stamps(i + 60, total)
     r["receivedAt"] = r["finishedAt"]
@@ -321,10 +325,10 @@ def main():
             "%d people per form. Ids SYN001... (main survey) and SYNP001... (short survey). Every row has test = synthetic." % N,
             "Sheet 'Every answer': each tap in order, with the offer shown, the choice and the response time in ms.",
             "Sheets 'Main survey rows' / 'Short survey rows': one row per person, same columns as the Google Sheet.",
-            "Model: beta-delta discounting with a mix of people: main survey 62% present-biased (beta ~ 0.74), 30% consistent (~0.98), 8% future-biased (~1.06); short survey 50 / 30 / 20%; fines k x 0.25 (Thaler 1981); friend k x 0.6, beta halfway to 1 (Albrecht et al. 2011);",
-            "health as a gain k x 1.5, flu as a cost k x 0.25; domain-specific spread (Chapman 1996); hidden zero removes 75% of present bias (Magen et al. 2008);",
-            "anchors move amounts +45% / -20% (Tversky & Kahneman 1974); gut answers rise with present bias, with noise (Frederick 2005); noisy choices and 5% slips; occasional long pauses.",
-            "Response times: lognormal around 1.4 s per money choice, up to 4x slower near the person's switch point, plus 2.5 to 7 s reading time on a new question."]}).to_excel(xw, sheet_name="Read me", index=False)
+            "Model: beta-delta discounting with a mix of people: main survey 62% present-biased (beta ~ 0.74), 30% consistent (~0.98), 8% future-biased (~1.06); short survey 50 / 30 / 20%; fines k x 0.25 (Thaler 1981); friend treated like oneself (no difference; the proposal had no prior);",
+            "health as a gain k x 1.5, flu as a cost k x 0.25; domain-specific spread (Chapman 1996); hidden zero removes 10% of present bias (very weak, like later replications);",
+            "anchors move amounts +12% / -6% with large noise (weak); gut answers only weakly linked to present bias (Frederick 2005); about 3% miss an attention check; noisy choices and 5% slips; occasional long pauses.",
+            "Response times: lognormal around 1.4 s per money choice, up to 2x slower near the person's switch point, plus 2.5 to 7 s reading time on a new question."]}).to_excel(xw, sheet_name="Read me", index=False)
         taps_df.to_excel(xw, sheet_name="Every answer", index=False)
         pd.DataFrame(main_rows).drop(columns=["trialsJSON"]).to_excel(xw, sheet_name="Main survey rows", index=False)
         pd.DataFrame(prop_rows).drop(columns=["trialsJSON"]).to_excel(xw, sheet_name="Short survey rows", index=False)
