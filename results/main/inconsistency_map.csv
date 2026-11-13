@@ -1,0 +1,5 @@
+context,n,present_biased_pct,future_biased_pct,consistent_pct,inconsistent_pct
+gain,123,23.6,24.4,52.0,48.0
+loss,123,18.7,11.4,69.9,30.1
+health,123,26.8,37.4,35.8,64.2
+friend,123,21.1,22.8,56.1,43.9

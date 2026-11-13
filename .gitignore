@@ -4,3 +4,6 @@ node_modules/
 *.xlsx
 analysis/out/
 __pycache__/
+
+# Summary tables in results/ hold no personal data
+!results/**/*.csv

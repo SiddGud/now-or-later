@@ -1,10 +1,14 @@
 """Analysis for the short proposal survey (proposal.html), as planned in the project proposal.
 
 Usage:
-    py analysis/analyze_proposal.py path/to/responses.csv
+    py analysis/analyze_proposal.py path/to/responses.csv [--strict]
+
+--strict drops every dominance-check failer and nothing else (the proposal rule).
+By default every rushed response is dropped (over 25% of taps under 400 ms), whether or not it passed the check.
 
 Uses only rows with survey = proposal. Writes report and figure to analysis/out/proposal/.
 """
+import json
 import os
 import sys
 
@@ -21,6 +25,25 @@ CONTEXTS = ["gain", "loss", "health", "friend"]
 V = {"gain": 500, "loss": 500, "health": 10, "friend": 500}
 COLORS = {"gain": "#2a78d6", "loss": "#eb6834", "health": "#1baf7a", "friend": "#eda100"}
 LINES = []
+# A response counts as rushed when more than this share of its taps are under 400 ms
+# (the same warning sign as in the main survey)
+FAST_TAP_MS = 400
+FAST_SHARE = 0.25
+
+
+def fast_share(trials_json):
+    """Share of taps faster than FAST_TAP_MS in one response."""
+    try:
+        taps = json.loads(trials_json)
+    except (TypeError, ValueError):
+        return 1.0
+    if len(taps) == 0:
+        return 1.0
+    fast = 0
+    for t in taps:
+        if t.get("rt", 0) < FAST_TAP_MS:
+            fast += 1
+    return fast / float(len(taps))
 
 
 def say(text):
@@ -46,6 +69,13 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     os.makedirs(OUT, exist_ok=True)
     df = pd.read_csv([a for a in sys.argv[1:] if not a.startswith("--")][0])
+    # The Sheet's id header was once cleared: old ids sit under a blank header, new ones in an id column at the end
+    if " " in df.columns:
+        if "id" in df.columns:
+            df["id"] = df[" "].fillna(df["id"])
+        else:
+            df["id"] = df[" "]
+        df = df.drop(columns=[" "])
     if "survey" not in df.columns:
         say("No proposal-survey rows yet.")
         sys.exit(1)
@@ -67,8 +97,25 @@ def main():
     # Exclusions planned in the proposal: no consent, failed dominance check
     df = df[df["consent"] == "yes"]
     n0 = len(df)
-    df = df[df["attentionFail"] != "yes"]
-    say("Failed the dominance check: %d" % (n0 - len(df)))
+    failed = df["attentionFail"] == "yes"
+    say("Failed the dominance check: %d" % int(failed.sum()))
+    if "--strict" in sys.argv:
+        # Proposal's original rule: every check-failer is dropped
+        df = df[~failed]
+        say("Strict: all of them dropped")
+    else:
+        # Speed screen for everyone: a failed check alone may be a misclick, and a passed check
+        # may be a lucky tap, so a response is dropped when it was rushed
+        rushed = df["trialsJSON"].apply(fast_share) > FAST_SHARE
+        kept = df[failed & ~rushed]
+        dropped_pass = df[~failed & rushed]
+        df = df[~rushed]
+        say("Dropped as rushed (over %d%% of taps under %d ms): %d failed the check, %d passed it"
+            % (int(FAST_SHARE * 100), FAST_TAP_MS, int((failed & rushed).sum()), len(dropped_pass)))
+        if len(dropped_pass) > 0:
+            say("  passed the check but rushed: %s" % ", ".join(dropped_pass["id"].tolist()))
+        if len(kept) > 0:
+            say("Kept (failed only the check, other answers at reading speed): %s" % ", ".join(kept["id"].tolist()))
     say("Analysed: %d" % len(df))
     if len(df) < 5:
         say("Too few responses to analyse.")

@@ -1,0 +1,41 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                   logk   R-squared:                       0.261
+Model:                            OLS   Adj. R-squared:                  0.248
+Method:                 Least Squares   F-statistic:                     25.85
+Date:                Sat, 14 Nov 2026   Prob (F-statistic):           1.72e-32
+Time:                        00:59:12   Log-Likelihood:                -1722.4
+No. Observations:                 984   AIC:                             3481.
+Df Residuals:                     966   BIC:                             3569.
+Df Model:                          17                                         
+Covariance Type:              cluster                                         
+===========================================================================================================
+                                              coef    std err          z      P>|z|      [0.025      0.975]
+-----------------------------------------------------------------------------------------------------------
+Intercept                                  -3.9276      0.544     -7.217      0.000      -4.994      -2.861
+C(context, Treatment('gain'))[T.friend]    -0.0925      0.083     -1.117      0.264      -0.255       0.070
+C(context, Treatment('gain'))[T.health]     0.7847      0.142      5.511      0.000       0.506       1.064
+C(context, Treatment('gain'))[T.loss]      -1.3300      0.137     -9.674      0.000      -1.599      -1.061
+C(frame, Treatment('B'))[T.A]              -0.0747      0.062     -1.203      0.229      -0.196       0.047
+C(spending)[T.Over ₹10k]                   -0.3452      0.288     -1.200      0.230      -0.909       0.219
+C(spending)[T.Prefer not to say]           -0.2002      0.451     -0.444      0.657      -1.085       0.684
+C(spending)[T.Under ₹3k]                   -0.2759      0.268     -1.028      0.304      -0.802       0.250
+C(spending)[T.₹3k–6k]                      -0.6542      0.278     -2.350      0.019      -1.200      -0.109
+C(spending)[T.₹6k–10k]                     -0.4599      0.302     -1.525      0.127      -1.051       0.131
+C(priorKnowledge)[T.No]                     0.1140      0.174      0.654      0.513      -0.227       0.455
+C(priorKnowledge)[T.Yes, in detail]         0.0625      0.260      0.240      0.810      -0.447       0.572
+C(otherSurvey)[T.Not sure]                 -0.0485      0.355     -0.137      0.891      -0.744       0.647
+C(otherSurvey)[T.Yes]                      -0.5865      0.273     -2.145      0.032      -1.123      -0.051
+C(order)[T.BA]                              0.2208      0.164      1.347      0.178      -0.100       0.542
+type1Score                                 -0.1556      0.087     -1.783      0.075      -0.327       0.015
+trust                                      -0.1424      0.081     -1.758      0.079      -0.301       0.016
+stress                                      0.0554      0.058      0.950      0.342      -0.059       0.170
+==============================================================================
+Omnibus:                       43.453   Durbin-Watson:                   1.258
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               27.250
+Skew:                          -0.272   Prob(JB):                     1.21e-06
+Kurtosis:                       2.393   Cond. No.                         140.
+==============================================================================
+
+Notes:
+[1] Standard Errors are robust to cluster correlation (CRV1)

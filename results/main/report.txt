@@ -1,0 +1,237 @@
+Rows in file: 215
+Duplicate ids removed: 2
+Test, benchmark and synthetic rows removed: 2
+Proposal-survey rows set aside: 70
+Versions: {'v1': 109, 'v2': 19, 'v3': 13}
+
+== Exclusions ==
+No consent: 0
+Careless (3+ of 5 warning signs): 18, of whom 9 failed an attention check and 9 passed both
+  ids: o9fchswn, 6xf3vffc, poqh1we7, fi023nqi, w9esx97c, m00k7vd1, zwfihjb7, n6f2hnlf, qpaf1l9g, dl0mbf12, 0x3czkjt, una1tj9o, ne5ja549, eidiwg6x, nwpzkxlp, r1h1dn0p, iyy0dlwq, i6ftceg7
+Kept despite failing an attention check: 24
+Main sample: 123
+Strict sample (also drops every attention-check fail): 99
+Sensitivity sample (drops prior knowledge 'Yes, in detail' and otherSurvey 'Yes'): 100
+
+== Sample ==
+Age: median 20 (range 18-38)
+describes: {'IIIT-H student': 70, 'Student, other college': 47, 'Working professional': 6}
+order: {'AB': 63, 'BA': 60}
+nudgeGroup: {'hiddenZero': 63, 'standard': 60}
+anchorGroup: {'high': 71, 'low': 52}
+priorKnowledge: {'No': 61, 'Heard of it': 49, 'Yes, in detail': 13}
+otherSurvey: {'No': 105, 'Yes': 13, 'Not sure': 5}
+Censoring (high = true k is at least the value; low = at most): {'A_gain': {'no': 90, 'low': 21, 'high': 12}, 'B_gain': {'no': 96, 'low': 17, 'high': 10}, 'A_loss': {'low': 63, 'no': 54, 'high': 6}, 'B_loss': {'low': 70, 'no': 49, 'high': 4}, 'A_health': {'no': 80, 'high': 29, 'low': 14}, 'B_health': {'no': 87, 'high': 25, 'low': 11}, 'A_friend': {'no': 83, 'low': 26, 'high': 14}, 'B_friend': {'no': 89, 'low': 23, 'high': 11}}
+
+== H1 paradox (main sample) ==
+Flipped (today in near pair, later in far pair): 14/123 = 11.4% [95% CI 6.4-18.4]
+Pattern table (flipNear x flipFar):
+flipFar          ₹1000 in 4 weeks  ₹1100 in 5 weeks
+flipNear                                           
+₹1000 today                    35                14
+₹1100 in 1 week                26                48
+Exploratory McNemar: classic 14 vs reverse 26, exact p=0.0807
+  farFirst (n=2): classic 1, reverse 0
+  nearFirst (n=121): classic 13, reverse 26
+context   n  median_kA  median_kB  pct_kA_gt_kB      W       p     r_rb  p_holm
+   gain 123    0.00767    0.01200      29.26829 1339.0 0.52085 -0.08476 1.00000
+   loss 123    0.00083    0.00083      27.64228  715.5 0.20006  0.19153 0.60018
+ health 123    0.02750    0.03250      29.26829 1571.0 0.14656 -0.17921 0.58624
+ friend 123    0.00883    0.01200      30.08130 1358.0 0.72346 -0.04702 1.00000
+
+== H2 contexts ==
+Block A Friedman: chi2=117.175 p=0.00000 Kendall W=0.318 (n=123)
+block             pair      W       p     r_rb  p_holm
+    A     gain vs loss  688.5 0.00000  0.68497 0.00000
+    A   gain vs health 1483.5 0.00000 -0.56278 0.00000
+    A   gain vs friend 1017.5 0.88037  0.02163 0.88037
+    A   loss vs health  430.0 0.00000 -0.86880 0.00000
+    A   loss vs friend  618.5 0.00000 -0.69114 0.00000
+    A health vs friend 1460.0 0.00000  0.56222 0.00000
+Block B Friedman: chi2=135.351 p=0.00000 Kendall W=0.367 (n=123)
+block             pair      W      p     r_rb  p_holm
+    B     gain vs loss  722.5 0.0000  0.73021  0.0000
+    B   gain vs health 1528.5 0.0000 -0.56459  0.0000
+    B   gain vs friend 1334.5 0.3964  0.11122  0.3964
+    B   loss vs health  320.0 0.0000 -0.90405  0.0000
+    B   loss vs friend  744.5 0.0000 -0.71093  0.0000
+    B health vs friend 1250.0 0.0000  0.61861  0.0000
+
+== H3 trait vs state: Spearman of k across contexts ==
+Block A:
+         gain   loss  health  friend
+gain    1.000  0.231   0.342   0.772
+loss    0.231  1.000   0.139   0.203
+health  0.342  0.139   1.000   0.346
+friend  0.772  0.203   0.346   1.000
+Block B:
+         gain   loss  health  friend
+gain    1.000  0.116   0.124   0.630
+loss    0.116  1.000   0.073  -0.001
+health  0.124  0.073   1.000   0.177
+friend  0.630 -0.001   0.177   1.000
+
+== Inconsistency map (time inconsistency per context, block A vs block B) ==
+context   n  present_biased_pct  future_biased_pct  consistent_pct  inconsistent_pct
+   gain 123                23.6               24.4            52.0              48.0
+   loss 123                18.7               11.4            69.9              30.1
+ health 123                26.8               37.4            35.8              64.2
+ friend 123                21.1               22.8            56.1              43.9
+Inconsistent in at least one context: 85%
+
+== H4 hidden-zero nudge: nudge_k by nudgeGroup ==
+standard: n=60 median=0.00479 | hiddenZero: n=63 median=0.00525 | U=1787.5 p=0.60358 r_rb=-0.054
+Expected direction: hiddenZero lower k (more patient).
+
+== H5 anchoring: anchorAmount by anchorGroup ==
+high: n=71 median=10000 | low: n=52 median=8000 | U=2196.0 p=0.07236 r_rb=0.190
+One-sided (high > low, as H5 predicts): p=0.03618
+Anchor yes-rate: anchorGroup
+high    0.662
+low     0.077
+
+== H6 Type 1 thinking ==
+All versions together. v1 and v2 used easier puzzles that most people solved, so type1Score varied little there.
+type1Score vs mean log k (block A): rho=-0.096 p=0.28957
+  gain: rho=-0.068 p=0.45315
+  loss: rho=-0.145 p=0.11050
+  health: rho=-0.090 p=0.31976
+  friend: rho=-0.067 p=0.46092
+Logistic flipped ~ type1Score: OR=1.657 [0.928, 2.959] p=0.08806
+
+-- H6, v3 only (harder CRT-2 and Toplak puzzles), n=9 --
+type1Score distribution: {1.0: 3, 3.0: 4, 4.0: 2}
+type1Score vs mean log k (block A): rho=0.255 p=0.50791
+  gain: rho=0.148 p=0.70349
+  loss: rho=0.235 p=0.54205
+  health: rho=0.148 p=0.70483
+  friend: rho=0.272 p=0.47837
+Logistic flipped ~ type1Score: OR=4.309 [0.294, 63.197] p=0.28645
+
+== H7 decision time ==
+Median RT today-vs-later (A) 1628 ms vs later-vs-later (B) 1706 ms; Wilcoxon p=0.25815 r_rb=-0.117 (n=123)
+Classic pair RT: near 7067 ms vs far 4942 ms; Wilcoxon p=0.00000
+Within-person Spearman(distance from switch point, log RT): median rho=0.157, Wilcoxon vs 0 p=0.00000 (n=123)
+Expected: negative rho (slower near the switch point).
+Median RT by distance from switch point:
+dist
+(-0.001, 0.05]    1240.0
+(0.05, 0.1]       1145.0
+(0.1, 0.2]        1324.0
+(0.2, 0.3]        1597.0
+(0.3, 0.5]        1301.0
+
+== Regression: log k ~ context + frame + type1Score + trust + stress + spending + priorKnowledge + otherSurvey + order ==
+OLS, 984 observations from 123 people, SEs clustered by person
+===========================================================================================================
+                                              coef    std err          z      P>|z|      [0.025      0.975]
+-----------------------------------------------------------------------------------------------------------
+Intercept                                  -3.9276      0.544     -7.217      0.000      -4.994      -2.861
+C(context, Treatment('gain'))[T.friend]    -0.0925      0.083     -1.117      0.264      -0.255       0.070
+C(context, Treatment('gain'))[T.health]     0.7847      0.142      5.511      0.000       0.506       1.064
+C(context, Treatment('gain'))[T.loss]      -1.3300      0.137     -9.674      0.000      -1.599      -1.061
+C(frame, Treatment('B'))[T.A]              -0.0747      0.062     -1.203      0.229      -0.196       0.047
+C(spending)[T.Over ₹10k]                   -0.3452      0.288     -1.200      0.230      -0.909       0.219
+C(spending)[T.Prefer not to say]           -0.2002      0.451     -0.444      0.657      -1.085       0.684
+C(spending)[T.Under ₹3k]                   -0.2759      0.268     -1.028      0.304      -0.802       0.250
+C(spending)[T.₹3k–6k]                      -0.6542      0.278     -2.350      0.019      -1.200      -0.109
+C(spending)[T.₹6k–10k]                     -0.4599      0.302     -1.525      0.127      -1.051       0.131
+C(priorKnowledge)[T.No]                     0.1140      0.174      0.654      0.513      -0.227       0.455
+C(priorKnowledge)[T.Yes, in detail]         0.0625      0.260      0.240      0.810      -0.447       0.572
+C(otherSurvey)[T.Not sure]                 -0.0485      0.355     -0.137      0.891      -0.744       0.647
+C(otherSurvey)[T.Yes]                      -0.5865      0.273     -2.145      0.032      -1.123      -0.051
+C(order)[T.BA]                              0.2208      0.164      1.347      0.178      -0.100       0.542
+type1Score                                 -0.1556      0.087     -1.783      0.075      -0.327       0.015
+trust                                      -0.1424      0.081     -1.758      0.079      -0.301       0.016
+stress                                      0.0554      0.058      0.950      0.342      -0.059       0.170
+===========================================================================================================
+
+== Beta-delta per context (beta < 1 = present bias) ==
+context   n  beta_median  beta_lo  beta_hi  pct_beta_lt_1  p_beta_ne_1  delta30_median  delta30_lo  delta30_hi
+   gain 123          1.0      1.0   1.0000        29.2683       0.2159          0.7353      0.5935      0.8230
+   loss 123          1.0      1.0   1.0000        27.6423       0.4686          0.9756      0.9302      0.9756
+ health 123          1.0      1.0   1.0003        29.2683       0.0319          0.5063      0.4598      0.5634
+ friend 123          1.0      1.0   1.0000        30.0813       0.3736          0.7353      0.6098      0.8230
+
+== Sensitivity check (H1, H2 without prior-knowledge / other-survey respondents) ==
+
+== H1 paradox (sensitivity) ==
+Flipped (today in near pair, later in far pair): 12/100 = 12.0% [95% CI 6.4-20.0]
+Pattern table (flipNear x flipFar):
+flipFar          ₹1000 in 4 weeks  ₹1100 in 5 weeks
+flipNear                                           
+₹1000 today                    30                12
+₹1100 in 1 week                20                38
+Exploratory McNemar: classic 12 vs reverse 20, exact p=0.2153
+  farFirst (n=2): classic 1, reverse 0
+  nearFirst (n=98): classic 11, reverse 20
+context   n  median_kA  median_kB  pct_kA_gt_kB      W       p     r_rb  p_holm
+   gain 100    0.01042    0.01350          27.0  789.0 0.46867 -0.10847 0.96725
+   loss 100    0.00083    0.00083          27.0  433.5 0.24181  0.19796 0.96725
+ health 100    0.03000    0.03250          30.0 1148.0 0.26557 -0.14994 0.96725
+ friend 100    0.00966    0.01350          27.0  752.0 0.55386 -0.09014 0.96725
+
+== H2 contexts ==
+Block A Friedman: chi2=96.232 p=0.00000 Kendall W=0.321 (n=100)
+block             pair     W       p     r_rb  p_holm
+    A     gain vs loss 491.5 0.00000  0.66405 0.00000
+    A   gain vs health 989.0 0.00000 -0.56623 0.00000
+    A   gain vs friend 595.5 0.68507  0.06588 0.68507
+    A   loss vs health 318.0 0.00000 -0.85756 0.00000
+    A   loss vs friend 477.5 0.00000 -0.66491 0.00000
+    A health vs friend 954.5 0.00000  0.57245 0.00000
+Block B Friedman: chi2=121.614 p=0.00000 Kendall W=0.405 (n=100)
+block             pair     W      p     r_rb  p_holm
+    B     gain vs loss 457.0 0.0000  0.73781  0.0000
+    B   gain vs health 987.5 0.0000 -0.57582  0.0000
+    B   gain vs friend 877.5 0.6252  0.07192  0.6252
+    B   loss vs health 169.0 0.0000 -0.92588  0.0000
+    B   loss vs friend 450.0 0.0000 -0.73553  0.0000
+    B health vs friend 947.5 0.0000  0.58443  0.0000
+
+== Strict check (H1, H2, H4, H5 without any attention-check fails) ==
+
+== H1 paradox (strict) ==
+Flipped (today in near pair, later in far pair): 12/99 = 12.1% [95% CI 6.4-20.2]
+Pattern table (flipNear x flipFar):
+flipFar          ₹1000 in 4 weeks  ₹1100 in 5 weeks
+flipNear                                           
+₹1000 today                    26                12
+₹1100 in 1 week                21                40
+Exploratory McNemar: classic 12 vs reverse 21, exact p=0.1628
+  farFirst (n=2): classic 1, reverse 0
+  nearFirst (n=97): classic 11, reverse 21
+context  n  median_kA  median_kB  pct_kA_gt_kB      W       p     r_rb  p_holm
+   gain 99    0.00717    0.00883      31.31313  899.5 0.90915 -0.01694 1.00000
+   loss 99    0.00083    0.00083      28.28283  335.5 0.03953  0.35169 0.15812
+ health 99    0.02583    0.03250      28.28283 1019.0 0.19085 -0.17988 0.57256
+ friend 99    0.00717    0.00717      30.30303  908.5 0.79038 -0.03913 1.00000
+
+== H2 contexts ==
+Block A Friedman: chi2=101.558 p=0.00000 Kendall W=0.342 (n=99)
+block             pair     W       p     r_rb  p_holm
+    A     gain vs loss 385.0 0.00000  0.72252 0.00000
+    A   gain vs health 923.5 0.00000 -0.57744 0.00000
+    A   gain vs friend 628.0 0.57841  0.08853 0.57841
+    A   loss vs health 186.0 0.00000 -0.91113 0.00000
+    A   loss vs friend 314.5 0.00000 -0.73954 0.00000
+    A health vs friend 869.0 0.00000  0.59374 0.00000
+Block B Friedman: chi2=128.600 p=0.00000 Kendall W=0.433 (n=99)
+block             pair     W       p     r_rb  p_holm
+    B     gain vs loss 256.0 0.00000  0.84583 0.00000
+    B   gain vs health 925.5 0.00000 -0.58544 0.00000
+    B   gain vs friend 801.0 0.40129  0.12459 0.40129
+    B   loss vs health  20.0 0.00000 -0.99065 0.00000
+    B   loss vs friend 259.0 0.00000 -0.83608 0.00000
+    B health vs friend 758.0 0.00000  0.64563 0.00000
+
+== H4 hidden-zero nudge: nudge_k by nudgeGroup ==
+standard: n=47 median=0.00400 | hiddenZero: n=52 median=0.00400 | U=1243.5 p=0.88211 r_rb=0.018
+Expected direction: hiddenZero lower k (more patient).
+
+== H5 anchoring: anchorAmount by anchorGroup ==
+high: n=60 median=10000 | low: n=39 median=8000 | U=1421.0 p=0.07131 r_rb=0.215
+One-sided (high > low, as H5 predicts): p=0.03565
+Anchor yes-rate: anchorGroup
+high    0.650
+low     0.103

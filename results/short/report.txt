@@ -1,0 +1,41 @@
+Proposal-survey responses: 70
+Failed the dominance check: 6
+Dropped as rushed (over 25% of taps under 400 ms): 4 failed the check, 3 passed it
+  passed the check but rushed: ph4hskcr, sz8vxasi, a22i6n8x
+Kept (failed only the check, other answers at reading speed): eqj4ewj7, e2ccbr7o
+Analysed: 63
+Censoring per context: {'gain': {'no': 34, 'low': 19, 'high': 10}, 'loss': {'low': 44, 'no': 17, 'high': 2}, 'health': {'no': 60, 'high': 3}, 'friend': {'no': 36, 'low': 20, 'high': 7}}
+
+== k per context (today vs 30 days) ==
+gain   median k = 0.00600
+loss   median k = 0.00050
+health median k = 0.00167
+friend median k = 0.00683
+Friedman: chi2=42.79 p=0.00000 Kendall W=0.226
+            pair     W       p  p_holm
+    gain vs loss 100.5 0.00000 0.00001
+  gain vs health 633.0 0.01010 0.02021
+  gain vs friend 365.0 0.54522 0.54522
+  loss vs health 502.0 0.00044 0.00175
+  loss vs friend 152.5 0.00002 0.00011
+health vs friend 611.0 0.00648 0.01943
+Proposal predicted: loss k < gain k, health k < gain k.
+
+== Spearman of k across contexts ==
+         gain   loss  health  friend
+gain    1.000  0.261   0.142   0.592
+loss    0.261  1.000   0.119   0.165
+health  0.142  0.119   1.000   0.147
+friend  0.592  0.165   0.147   1.000
+
+== Near/far reversal (100 today vs 110 tomorrow; day 30 vs day 31) ==
+Classic reversal: 9/63 = 14.3% [95% CI 6.7-25.4]
+Reverse: 7/63 = 11.1% | Any reversal: 25.4%
+McNemar classic vs reverse: p=0.8036
+flipFar        ₹100 in 30 days  ₹110 in 31 days
+flipNear                                       
+₹100 today                   7                9
+₹110 tomorrow                7               40
+  farFirst (n=29): classic 1, reverse 5
+  nearFirst (n=34): classic 8, reverse 2
+Proposal predicted: a third or more show the reversal.

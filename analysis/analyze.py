@@ -87,6 +87,13 @@ def style_axes(ax):
 
 def load(path):
     df = pd.read_csv(path)
+    # The Sheet's id header was once cleared: old ids sit under a blank header, new ones in an id column at the end
+    if " " in df.columns:
+        if "id" in df.columns:
+            df["id"] = df[" "].fillna(df["id"])
+        else:
+            df["id"] = df[" "]
+        df = df.drop(columns=[" "])
     say("Rows in file: %d" % len(df))
     # Retries can create duplicate rows; keep the first arrival of each id
     if "receivedAt" in df.columns:
