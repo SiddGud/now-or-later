@@ -1,0 +1,303 @@
+{
+  "main_flow": {
+    "after_dedupe_and_tests": 142,
+    "careless_dropped": 19,
+    "analysed": 123,
+    "strict": 99
+  },
+  "proposal_rushed": {
+    "failed_check": 4,
+    "passed_check": 4,
+    "kept_failed_check": 2
+  },
+  "proposal_flow": {
+    "responses": 73,
+    "dropped_rushed": 8,
+    "analysed": 65
+  },
+  "k_by_context": [
+    {
+      "study": "main",
+      "context": "gain",
+      "n": 123,
+      "median_k": 0.00767,
+      "ci_lo": 0.00567,
+      "ci_hi": 0.01517,
+      "pct_floor": 17.07317,
+      "pct_ceiling": 9.7561,
+      "annual_rate_pct": 279.955
+    },
+    {
+      "study": "main",
+      "context": "loss",
+      "n": 123,
+      "median_k": 0.00083,
+      "ci_lo": 0.00083,
+      "ci_hi": 0.0025,
+      "pct_floor": 52.03252,
+      "pct_ceiling": 4.87805,
+      "annual_rate_pct": 30.295
+    },
+    {
+      "study": "main",
+      "context": "health",
+      "n": 123,
+      "median_k": 0.0275,
+      "ci_lo": 0.01917,
+      "ci_hi": 0.03417,
+      "pct_floor": 12.19512,
+      "pct_ceiling": 23.57724,
+      "annual_rate_pct": 1003.75
+    },
+    {
+      "study": "main",
+      "context": "friend",
+      "n": 123,
+      "median_k": 0.00883,
+      "ci_lo": 0.00567,
+      "ci_hi": 0.0165,
+      "pct_floor": 21.13821,
+      "pct_ceiling": 11.38211,
+      "annual_rate_pct": 322.295
+    },
+    {
+      "study": "proposal",
+      "context": "gain",
+      "n": 65,
+      "median_k": 0.006,
+      "ci_lo": 0.00217,
+      "ci_hi": 0.01317,
+      "pct_floor": 29.23077,
+      "pct_ceiling": 15.38462,
+      "annual_rate_pct": 219.0
+    },
+    {
+      "study": "proposal",
+      "context": "loss",
+      "n": 65,
+      "median_k": 0.0005,
+      "ci_lo": 0.0005,
+      "ci_hi": 0.0005,
+      "pct_floor": 70.76923,
+      "pct_ceiling": 3.07692,
+      "annual_rate_pct": 18.25
+    },
+    {
+      "study": "proposal",
+      "context": "health",
+      "n": 65,
+      "median_k": 0.00167,
+      "ci_lo": 0.00167,
+      "ci_hi": 0.00167,
+      "pct_floor": 69.23077,
+      "pct_ceiling": 4.61538,
+      "annual_rate_pct": 60.955
+    },
+    {
+      "study": "proposal",
+      "context": "friend",
+      "n": 65,
+      "median_k": 0.00683,
+      "ci_lo": 0.00217,
+      "ci_hi": 0.01483,
+      "pct_floor": 30.76923,
+      "pct_ceiling": 10.76923,
+      "annual_rate_pct": 249.295
+    }
+  ],
+  "sign_effect": {
+    "money_main": {
+      "pct_gain_gt_loss": 63.41463414634146,
+      "p": 6.770118727046614e-09,
+      "r_rb": 0.6920613132006406,
+      "n": 123
+    },
+    "money_proposal": {
+      "pct_gain_gt_loss": 66.15384615384615,
+      "p": 7.283858105187455e-07,
+      "r_rb": 0.8205782312925171,
+      "n": 65
+    },
+    "health_between": {
+      "median_gain": 0.0275,
+      "median_loss": 0.00167,
+      "p": 3.112081194698174e-11,
+      "r_rb": 0.5854909318323953
+    }
+  },
+  "present_bias": {
+    "table": [
+      {
+        "context": "gain",
+        "n": 123,
+        "mean_logk_diff": -0.152,
+        "dz": -0.143,
+        "dz_lo": -0.31,
+        "dz_hi": 0.032,
+        "pct_A_gt_B": 29.268,
+        "pct_equal": 39.024,
+        "pct_A_lt_B": 31.707
+      },
+      {
+        "context": "loss",
+        "n": 123,
+        "mean_logk_diff": 0.182,
+        "dz": 0.117,
+        "dz_lo": -0.062,
+        "dz_hi": 0.301,
+        "pct_A_gt_B": 27.642,
+        "pct_equal": 52.846,
+        "pct_A_lt_B": 19.512
+      },
+      {
+        "context": "health",
+        "n": 123,
+        "mean_logk_diff": -0.219,
+        "dz": -0.224,
+        "dz_lo": -0.385,
+        "dz_hi": -0.065,
+        "pct_A_gt_B": 29.268,
+        "pct_equal": 29.268,
+        "pct_A_lt_B": 41.463
+      },
+      {
+        "context": "friend",
+        "n": 123,
+        "mean_logk_diff": -0.107,
+        "dz": -0.079,
+        "dz_lo": -0.255,
+        "dz_hi": 0.102,
+        "pct_A_gt_B": 30.081,
+        "pct_equal": 39.024,
+        "pct_A_lt_B": 30.894
+      }
+    ],
+    "mde_dz": 0.2526104320105599
+  },
+  "reversal": {
+    "by_order": [
+      {
+        "flipOrder": "farFirst",
+        "n": 32,
+        "classic": 3,
+        "reverse": 5
+      },
+      {
+        "flipOrder": "nearFirst",
+        "n": 43,
+        "classic": 11,
+        "reverse": 3
+      }
+    ],
+    "discordant": 22,
+    "first_sooner": 16,
+    "p_position": 0.052478790283203125,
+    "near_sooner": 14,
+    "p_delay": 0.28627872467041016,
+    "or_near": 0.7279429455772811,
+    "p_near": 0.32630485036258794,
+    "or_first": 0.5198736034235449,
+    "p_first": 0.0436121864509548
+  },
+  "trait_state": {
+    "pairs": [
+      {
+        "study": "main",
+        "pair": "gain-loss",
+        "rho": 0.233,
+        "lo": 0.055,
+        "hi": 0.403
+      },
+      {
+        "study": "main",
+        "pair": "gain-health",
+        "rho": 0.336,
+        "lo": 0.162,
+        "hi": 0.508
+      },
+      {
+        "study": "main",
+        "pair": "gain-friend",
+        "rho": 0.773,
+        "lo": 0.642,
+        "hi": 0.877
+      },
+      {
+        "study": "main",
+        "pair": "loss-health",
+        "rho": 0.158,
+        "lo": -0.039,
+        "hi": 0.341
+      },
+      {
+        "study": "main",
+        "pair": "loss-friend",
+        "rho": 0.204,
+        "lo": 0.007,
+        "hi": 0.391
+      },
+      {
+        "study": "main",
+        "pair": "health-friend",
+        "rho": 0.345,
+        "lo": 0.162,
+        "hi": 0.512
+      },
+      {
+        "study": "proposal",
+        "pair": "gain-loss",
+        "rho": 0.252,
+        "lo": -0.003,
+        "hi": 0.486
+      },
+      {
+        "study": "proposal",
+        "pair": "gain-health",
+        "rho": 0.131,
+        "lo": -0.101,
+        "hi": 0.359
+      },
+      {
+        "study": "proposal",
+        "pair": "gain-friend",
+        "rho": 0.596,
+        "lo": 0.364,
+        "hi": 0.778
+      },
+      {
+        "study": "proposal",
+        "pair": "loss-health",
+        "rho": 0.133,
+        "lo": -0.107,
+        "hi": 0.388
+      },
+      {
+        "study": "proposal",
+        "pair": "loss-friend",
+        "rho": 0.148,
+        "lo": -0.103,
+        "hi": 0.388
+      },
+      {
+        "study": "proposal",
+        "pair": "health-friend",
+        "rho": 0.13,
+        "lo": -0.122,
+        "hi": 0.385
+      }
+    ],
+    "within_context_AB": {
+      "gain": 0.7427568683154383,
+      "loss": 0.43786890066646206,
+      "health": 0.6050900779667563,
+      "friend": 0.5973625965550677
+    }
+  },
+  "rt_adjusted_pct": {
+    "(-0.001, 0.03]": 4.9,
+    "(0.03, 0.06]": -0.2,
+    "(0.06, 0.1]": -3.9,
+    "(0.1, 0.15]": -7.0,
+    "(0.15, 0.25]": -3.7
+  }
+}

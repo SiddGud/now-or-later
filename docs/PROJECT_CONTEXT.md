@@ -9,8 +9,8 @@
 
 ## Files already built (in this folder)
 - index.html: the complete single-page app (vanilla HTML/CSS/JS, no build step). Hosted on GitHub Pages.
-- Code.gs: Google Apps Script backend. Container-bound to a Google Sheet, deployed as a web app (Execute as me, Anyone). doPost appends one row per response to the "responses" tab, adding columns for new keys.
-- SETUP.md: deployment and lottery instructions.
+- backend/Code.gs: Google Apps Script backend. Container-bound to a Google Sheet, deployed as a web app (Execute as me, Anyone). doPost appends one row per response to the "responses" tab, adding columns for new keys.
+- docs/SETUP.md: deployment and lottery instructions.
 - The app was tested end to end with Playwright on a 390x844 viewport: no JS errors, 84 fields posted, report card renders. tests/playthrough.js (npm test) repeats this 80 times.
 - analysis/analyze.py runs the planned analysis on the exported Sheet CSV.
 

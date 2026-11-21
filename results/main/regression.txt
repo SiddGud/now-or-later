@@ -1,40 +1,42 @@
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:                   logk   R-squared:                       0.261
-Model:                            OLS   Adj. R-squared:                  0.248
-Method:                 Least Squares   F-statistic:                     25.85
-Date:                Sat, 14 Nov 2026   Prob (F-statistic):           1.72e-32
-Time:                        00:59:12   Log-Likelihood:                -1722.4
-No. Observations:                 984   AIC:                             3481.
-Df Residuals:                     966   BIC:                             3569.
-Df Model:                          17                                         
+Dep. Variable:                   logk   R-squared:                       0.272
+Model:                            OLS   Adj. R-squared:                  0.258
+Method:                 Least Squares   F-statistic:                     25.33
+Date:                Sat, 21 Nov 2026   Prob (F-statistic):           1.63e-33
+Time:                        17:12:56   Log-Likelihood:                -1717.8
+No. Observations:                 984   AIC:                             3476.
+Df Residuals:                     964   BIC:                             3573.
+Df Model:                          19                                         
 Covariance Type:              cluster                                         
 ===========================================================================================================
                                               coef    std err          z      P>|z|      [0.025      0.975]
 -----------------------------------------------------------------------------------------------------------
-Intercept                                  -3.9276      0.544     -7.217      0.000      -4.994      -2.861
-C(context, Treatment('gain'))[T.friend]    -0.0925      0.083     -1.117      0.264      -0.255       0.070
-C(context, Treatment('gain'))[T.health]     0.7847      0.142      5.511      0.000       0.506       1.064
-C(context, Treatment('gain'))[T.loss]      -1.3300      0.137     -9.674      0.000      -1.599      -1.061
-C(frame, Treatment('B'))[T.A]              -0.0747      0.062     -1.203      0.229      -0.196       0.047
-C(spending)[T.Over ₹10k]                   -0.3452      0.288     -1.200      0.230      -0.909       0.219
-C(spending)[T.Prefer not to say]           -0.2002      0.451     -0.444      0.657      -1.085       0.684
-C(spending)[T.Under ₹3k]                   -0.2759      0.268     -1.028      0.304      -0.802       0.250
-C(spending)[T.₹3k–6k]                      -0.6542      0.278     -2.350      0.019      -1.200      -0.109
-C(spending)[T.₹6k–10k]                     -0.4599      0.302     -1.525      0.127      -1.051       0.131
-C(priorKnowledge)[T.No]                     0.1140      0.174      0.654      0.513      -0.227       0.455
-C(priorKnowledge)[T.Yes, in detail]         0.0625      0.260      0.240      0.810      -0.447       0.572
-C(otherSurvey)[T.Not sure]                 -0.0485      0.355     -0.137      0.891      -0.744       0.647
-C(otherSurvey)[T.Yes]                      -0.5865      0.273     -2.145      0.032      -1.123      -0.051
-C(order)[T.BA]                              0.2208      0.164      1.347      0.178      -0.100       0.542
-type1Score                                 -0.1556      0.087     -1.783      0.075      -0.327       0.015
-trust                                      -0.1424      0.081     -1.758      0.079      -0.301       0.016
-stress                                      0.0554      0.058      0.950      0.342      -0.059       0.170
+Intercept                                  -4.0504      0.573     -7.063      0.000      -5.174      -2.926
+C(context, Treatment('gain'))[T.friend]    -0.0990      0.083     -1.199      0.231      -0.261       0.063
+C(context, Treatment('gain'))[T.health]     0.7636      0.143      5.329      0.000       0.483       1.044
+C(context, Treatment('gain'))[T.loss]      -1.3555      0.137     -9.883      0.000      -1.624      -1.087
+C(frame, Treatment('B'))[T.A]              -0.0740      0.062     -1.191      0.234      -0.196       0.048
+C(spending)[T.Over ₹10k]                   -0.2130      0.375     -0.568      0.570      -0.947       0.521
+C(spending)[T.Prefer not to say]           -0.0198      0.401     -0.050      0.961      -0.805       0.765
+C(spending)[T.Under ₹3k]                   -0.1130      0.328     -0.345      0.730      -0.755       0.529
+C(spending)[T.₹3k–6k]                      -0.4861      0.335     -1.449      0.147      -1.144       0.171
+C(spending)[T.₹6k–10k]                     -0.3087      0.360     -0.858      0.391      -1.014       0.396
+C(priorKnowledge)[T.No]                     0.0858      0.173      0.496      0.620      -0.253       0.425
+C(priorKnowledge)[T.Yes, in detail]         0.0673      0.252      0.267      0.789      -0.426       0.561
+C(otherSurvey)[T.Not sure]                  0.1056      0.271      0.390      0.696      -0.425       0.636
+C(otherSurvey)[T.Yes]                      -0.5954      0.275     -2.163      0.031      -1.135      -0.056
+C(order)[T.BA]                              0.1794      0.165      1.090      0.276      -0.143       0.502
+C(version)[T.v2]                           -0.4925      0.241     -2.041      0.041      -0.966      -0.019
+C(version)[T.v3]                           -0.2396      0.308     -0.778      0.436      -0.843       0.364
+type1Score                                 -0.1116      0.115     -0.968      0.333      -0.338       0.114
+trust                                      -0.1366      0.079     -1.736      0.083      -0.291       0.018
+stress                                      0.0667      0.056      1.196      0.232      -0.043       0.176
 ==============================================================================
-Omnibus:                       43.453   Durbin-Watson:                   1.258
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):               27.250
-Skew:                          -0.272   Prob(JB):                     1.21e-06
-Kurtosis:                       2.393   Cond. No.                         140.
+Omnibus:                       33.660   Durbin-Watson:                   1.263
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               20.577
+Skew:                          -0.208   Prob(JB):                     3.40e-05
+Kurtosis:                       2.427   Cond. No.                         143.
 ==============================================================================
 
 Notes:

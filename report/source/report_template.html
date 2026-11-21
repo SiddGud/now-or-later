@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Now or Later? Final Report</title>
+<style>
+  @page { size: A4; margin: 15mm 15mm 15mm 15mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body { font-family: Cambria, "Times New Roman", serif; font-size: 9.6pt; line-height: 1.33; color: #111; }
+  h1 { font-size: 15.5pt; line-height: 1.2; margin: 0 0 3pt 0; font-weight: bold; }
+  .kicker { font-family: Arial, sans-serif; font-size: 8pt; letter-spacing: .06em; text-transform: uppercase; color: #8a3a12; margin-bottom: 3pt; }
+  .authors { font-size: 9.8pt; margin: 2pt 0 1pt 0; }
+  .affil { font-size: 8.8pt; color: #444; margin-bottom: 7pt; }
+  .abstract { border-top: 0.8pt solid #222; border-bottom: 0.8pt solid #222; padding: 5pt 0 6pt 0; margin-bottom: 8pt; font-size: 9.2pt; text-align: justify; }
+  .abstract b { font-family: Arial, sans-serif; font-size: 8.2pt; text-transform: uppercase; letter-spacing: .05em; }
+  .cols { column-count: 2; column-gap: 6.5mm; text-align: justify; hyphens: auto; }
+  h2 { font-family: Arial, sans-serif; font-size: 10.2pt; margin: 8pt 0 3pt 0; break-after: avoid; }
+  h3 { font-family: Arial, sans-serif; font-size: 9pt; margin: 6pt 0 2pt 0; break-after: avoid; color: #222; }
+  p { margin: 0 0 4.5pt 0; }
+  .eq { text-align: center; margin: 3pt 0 4pt 0; font-style: italic; }
+  table { border-collapse: collapse; width: 100%; font-size: 8pt; line-height: 1.25; margin: 2pt 0 2pt 0; text-align: left; }
+  th { font-family: Arial, sans-serif; font-weight: bold; font-size: 7.6pt; border-bottom: 0.7pt solid #222; padding: 2pt 3pt; vertical-align: bottom; }
+  td { padding: 1.8pt 3pt; vertical-align: top; border-bottom: 0.3pt solid #ddd; }
+  tr:last-child td { border-bottom: 0.7pt solid #222; }
+  thead tr:first-child th { border-top: 0.7pt solid #222; }
+  .wide { column-span: all; margin: 4pt 0 7pt 0; }
+  figure { margin: 3pt 0 7pt 0; break-inside: avoid; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption, .tcap { font-size: 8.1pt; line-height: 1.28; color: #222; margin-top: 2pt; text-align: left; }
+  .tcap { margin: 0 0 2pt 0; }
+  figcaption b, .tcap b { font-family: Arial, sans-serif; }
+  .block { break-inside: avoid; margin: 3pt 0 6pt 0; }
+  .num { text-align: right; white-space: nowrap; }
+  .ok { font-weight: bold; }
+  ul { margin: 0 0 4.5pt 0; padding-left: 11pt; }
+  li { margin: 0 0 2pt 0; }
+  .refs { font-size: 7.7pt; line-height: 1.27; text-align: left; }
+  .refs p { margin: 0 0 1.6pt 0; padding-left: 9pt; text-indent: -9pt; }
+  a { color: #1c4f8f; text-decoration: none; word-break: break-all; }
+  .small { font-size: 8.3pt; }
+  .eqt { width: auto; margin: 2pt auto 5pt auto; font-size: 9pt; }
+  .eqt td { border: none !important; padding: 0.5pt 6pt; }
+  .eqt td:first-child { color: #555; text-align: right; font-size: 8.3pt; }
+  .fig3wrap { display: flex; gap: 6pt; align-items: center; }
+  .fig3wrap svg { width: 52%; flex: none; }
+  .fig3wrap figcaption { margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="kicker">Neuroeconomics · IIIT Hyderabad · Team 6 · Final report</div>
+<h1>Now or Later? A cross-contextual study of the time-discounting paradox and of inconsistencies in time valuation</h1>
+<div class="authors">Siddhant Gudwani (2024102042) &nbsp;·&nbsp; Yogansh (2024101006)</div>
+<div class="affil">Supervised by Prof. Kavita Vemuri &nbsp;·&nbsp; November 2026</div>
+
+<div class="abstract"><b>Abstract.</b>
+We asked whether people's patience is one stable trait, and whether they reverse their preferences toward the present as the time-discounting paradox predicts. Two web surveys collected 215 unique responses between 5 and 15 November 2026; 188 were analysed. The main survey (n = 123) found each person's switch point for the same 30-day wait in four contexts (receiving money, paying a fine, gaining headache-free days, and receiving money on behalf of a close friend), once with the wait starting today and once starting in 30 days. It also tested a hidden-zero framing nudge, an anchor, intuitive (Type 1) thinking and decision times. A short survey (n = 65) ran the design in our proposal and served as a replication. The stake mattered most: a month's wait cost the median person 2% of a fine, 19% of a money gain and 45% of healthy days (Friedman χ² = 116.4, Kendall's W = 0.32), and the ranking replicated. Patience in one context barely predicted patience in another (ρ = 0.16–0.34), except money for oneself and for a friend (ρ = 0.77). We found no net pull toward the present: 85% of people were inconsistent somewhere, but as often toward the future as toward now. A random anchor moved the price of waiting a year from ₹8,000 to ₹10,000 (one-sided p = .027). The nudge, the Type 1 score and response times to "today" options showed no effect.
+</div>
+
+<div class="cols">
+
+<h2>1&nbsp;&nbsp;Introduction</h2>
+<p>Asked to choose between ₹100 today and ₹110 tomorrow, many people take the ₹100. Asked to choose between ₹100 in 30 days and ₹110 in 31 days, most wait. Both questions ask whether one day is worth ₹10; switching between them is a <i>preference reversal</i> (Thaler, 1981; Keren &amp; Roelofsma, 1995). Exponential discounting, <i>V</i> = <i>A</i>·δ<sup><i>D</i></sup> (Samuelson, 1937), loses the same share of value per day and so rules reversals out. Hyperbolic discounting, <i>V</i> = <i>A</i>/(1 + <i>kD</i>) (Ainslie, 1975; Mazur, 1987), loses value fastest near the present, which produces them. The β–δ model (Laibson, 1997) keeps exponential discounting but multiplies every delayed reward by an extra factor β; β &lt; 1 is present bias. McClure et al. (2004) linked β to the brain: ventral striatum and medial prefrontal cortex responded only when a reward was available immediately, while lateral prefrontal and parietal cortex were engaged by every choice, and more so when people chose to wait. This is the fast-impulsive (Type 1) versus slow-deliberate (Type 2) split from the course.</p>
+<p>Our title asks two things: whether the paradox holds <i>across contexts</i>, and how inconsistent time valuation is. We turned these into seven hypotheses (Table 1). H4–H7 also cover the course requirements: a framing nudge, anchoring, heuristics, and Type 1 versus Type 2 thinking.</p>
+
+
+<h2>2&nbsp;&nbsp;Method</h2>
+<h3>2.1&nbsp;&nbsp;Two survey forms</h3>
+<p><b>Main survey</b> (<a href="https://siddgud.github.io/now-or-later/">siddgud.github.io/now-or-later</a>; median 8.5 min). We built a mobile-first web app instead of a Google Form because the design needed three things a form cannot do: questions that adapt to earlier answers, random assignment to groups, and a timestamp on every tap. Answers went straight to a Google Sheet. One question appeared per screen, and answers could not be changed. The words "discounting" and "patience" appeared only on the report card shown after submission.</p>
+<div class="block">
+<div class="tcap"><b>Table 1.</b> Hypotheses, written before data collection.</div>
+<table>
+<thead><tr><th>#</th><th>Prediction</th><th>Basis</th></tr></thead>
+<tbody>
+<tr><td>H1</td><td>People reverse toward "now": more impatient when a wait starts today than when the same wait starts later.</td><td>Thaler 1981; Laibson 1997</td></tr>
+<tr><td>H2</td><td>Patience depends on the stake: fines are discounted less than gains, and health differently from money.</td><td>Thaler 1981; Chapman 1996; Pronin et al. 2008</td></tr>
+<tr><td>H3</td><td>Patience is a trait: a person's discount rates correlate across contexts.</td><td>trait view of patience</td></tr>
+<tr><td>H4</td><td>Writing out the hidden zero ("and ₹0 later") makes people wait more.</td><td>Magen et al. 2008</td></tr>
+<tr><td>H5</td><td>An irrelevant high number raises the amount people demand for waiting.</td><td>Tversky &amp; Kahneman 1974</td></tr>
+<tr><td>H6</td><td>People who give intuitive (Type 1) answers to reflection puzzles are more impatient.</td><td>Frederick 2005</td></tr>
+<tr><td>H7</td><td>Choices that include "today" take longer, because the two systems conflict.</td><td>McClure et al. 2004</td></tr>
+</tbody></table>
+</div>
+<p><b>Short survey</b> (<a href="https://siddgud.github.io/now-or-later/proposal.html">…/proposal.html</a>; median 2.3 min). Added on 7 November, it runs the design in our proposal word for word: gain, fine, flu and friend, all as "today vs 30 days", in random order; the ₹100 today vs ₹110 tomorrow pair and its day 30 vs 31 twin; and one dominance check. It had two purposes: to test the proposal's own wording, especially health framed as a loss (days of flu), and to provide an independent replication sample through a survey short enough for people unwilling to spend eight minutes. The two forms were shared as separate links and responses were not matched across them, so a small overlap of people cannot be ruled out.</p>
+
+<h3>2.2&nbsp;&nbsp;Measuring patience: same wait, different start</h3>
+<p>Each context was asked in two versions with the same 30-day gap. In <b>Version A</b> the wait starts today ("₹500 today or ₹<i>X</i> in 30 days"); in <b>Version B</b> it starts a month later ("₹500 in 30 days or ₹<i>X</i> in 60 days"). Exponential discounting predicts the same answer in both. Demanding more in A than in B is present bias. Order (all A first or all B first) was random, and contexts were shuffled within each block, giving 8 measurements per person and 984 in total.</p>
+<p>The four contexts change one thing at a time against the money-gain baseline. A <b>fine</b> ("pay ₹500 now or ₹<i>X</i> later") reverses the sign (Thaler, 1981). <b>Health</b> changes the domain: headache-free days, 20 now or <i>X</i> later (Chapman, 1996). A <b>friend</b> receiving the money changes social distance (Pronin et al., 2008). The short survey's health item was a mild flu instead: 10 days now or <i>X</i> later.</p>
+<p>Each switch point <i>S</i> came from six adaptive choices (adjusting-amount titration; Du, Green &amp; Myerson, 2002). For money the later amount started at ₹875 and halved its range after every answer between ₹500 and ₹1,250, giving about ₹12 precision. For health the range was 20–80 days in one-day steps. Every answer narrows the range, so no one can contradict themselves within a task (Fig. 1). From <i>S</i> and the sooner value <i>V</i>:</p>
+<table class="eqt"><tr><td>discount rate</td><td><i>k</i> = (<i>S</i>/<i>V</i> − 1) / 30</td></tr><tr><td>value lost to the wait</td><td>30<i>k</i> / (1 + 30<i>k</i>)</td></tr><tr><td>present bias</td><td>β = <i>S</i><sub>B</sub> / <i>S</i><sub>A</sub>&nbsp; (β &lt; 1: present-biased)</td></tr></table>
+<p>For the median person, <i>S</i> = ₹615, so <i>k</i> = 0.0077 per day and 19% of the value is lost. We report the percentage lost because it is easier to read than <i>k</i>. For fines, a low <i>k</i> means paying now: about half the sample always chose to pay immediately, so their fine <i>k</i> sits at the bottom of the scale (censored).</p>
+<figure>
+{{FIG0}}
+<figcaption><b>Figure 1.</b> Top: the same 30-day wait starting today (A) or on day 30 (B). Bottom: the six adaptive taps for the median person in Version A. Each answer halves the shaded range of possible switch points; the last range (₹610–620) gives <i>S</i> = ₹615.</figcaption>
+</figure>
+
+<h3>2.3&nbsp;&nbsp;Other tasks</h3>
+<ul>
+<li><b>Classic reversal pair</b>: ₹1,000 today vs ₹1,100 in a week, and ₹1,000 in 4 weeks vs ₹1,100 in 5 weeks. One pair came near the start and the other near the end (random order from version 3 onward).</li>
+<li><b>Hidden-zero nudge (H4)</b>: an extra titration on ₹2,000 today vs up to ₹5,000 in 30 days. Half saw "₹2,000 today and ₹0 later, or ₹0 today and ₹<i>X</i> later".</li>
+<li><b>Anchor (H5)</b>: a random yes/no question, "give up ₹5,000 today for ₹15,000 (or ₹5,200) in a year?", then for everyone "the smallest amount in a year that would make you give up ₹5,000 today".</li>
+<li><b>Type 1 score (H6)</b>: five money- and time-themed reflection puzzles with a tempting wrong answer (Frederick, 2005; Toplak et al., 2014), placed last so they could not prime the choices. Score = number of intuitive answers (0–5).</li>
+<li><b>Decision time (H7)</b>: every tap was timed in milliseconds.</li>
+<li><b>Controls</b>: trust that a future payment would arrive, stress, monthly spending, prior knowledge of the topic, and whether the person had recently taken a similar survey. There were two attention checks.</li>
+</ul>
+<p><b>Incentive.</b> One randomly drawn participant is paid one of their own money-gain choices by UPI on the date they chose (up to ₹1,250), a random-lottery incentive that makes every choice potentially real. Four more receive ₹200 vouchers. Rewards never depended on the answers. A personal "patience report card" after submission encouraged people to share the link.</p>
+<p><b>Revisions during collection.</b> Version 2 (6 Nov) added a sixth titration step, widened the health range from 20–50 to 20–80 days (a quarter of early respondents hit the top), and reworded an attention check that 21% had failed. Version 3 (7 Nov) randomised the order of the classic pair and used harder puzzles. Money ranges, wording and the <i>k</i> formula did not change, and version is a covariate in the regression.</p>
+
+<h3>2.4&nbsp;&nbsp;Recruitment and sample</h3>
+<p>Both links were shared from 5 to 15 November 2026 in IIIT Hyderabad student communities and through WhatsApp, Facebook and Reddit. These included survey-exchange ("survey swap") groups, where people fill in each other's surveys, whose members are in India, Pakistan, the Philippines, Azerbaijan, Spain, the UK and the USA. The surveys did not ask for country or recruitment channel, so we cannot give counts per country or channel. The UPI payout does mean most respondents were probably in India.</p>
+<p>The sheet holds 220 rows. Two were our setup tests, two were duplicate submissions of the same response, and one came from a team member, leaving <b>215 unique responses</b> (142 main, 73 short). In the main survey we dropped a response only if it showed at least three of five warning signs: under 5 minutes in total, a median tap under 0.8 s, more than a quarter of taps under 0.4 s, seven or more tasks answered all on one side, or failing both attention checks. This removed 19 people. Nine of them had passed both attention checks, so tap timing caught carelessness the checks missed. In the short survey we applied the same speed sign: 8 responses with more than a quarter of taps under 0.4 s were dropped (4 of them had also failed the dominance check). The 2 people who failed only the dominance check, with all other answers at reading speed, were kept; the proposal's rule of dropping all 6 check failures gives the same conclusions. That left <b>188 people</b> (Table 2). We re-ran every test on a <i>strict</i> sample (n = 99, also dropping anyone who failed any attention check) and on a <i>sensitivity</i> sample (n = 100, dropping people with detailed prior knowledge or a recent similar survey).</p>
+
+<div class="block">
+<div class="tcap"><b>Table 2.</b> Analysed sample.</div>
+<table>
+<thead><tr><th></th><th>Main (n = 123)</th><th>Short (n = 65)</th></tr></thead>
+<tbody>
+<tr><td>Age, median (range)</td><td>20 (18–38)</td><td>21 (18–48)</td></tr>
+<tr><td>Who</td><td>IIIT-H students 70, other colleges 47, working 6</td><td>students 59 (all years, UG–PG), not students 6</td></tr>
+<tr><td>Field</td><td>not asked</td><td>humanities/social sci. 19, CSE/IT 12, ECE/EE 8, other eng. 7, science 4, other 15</td></tr>
+<tr><td>Monthly spending</td><td>&lt;₹3k 33, ₹3–6k 44, ₹6–10k 28, &gt;₹10k 13, not said 5</td><td>not asked</td></tr>
+<tr><td>Prior knowledge</td><td>none 61, heard of it 49, in detail 13</td><td>not asked</td></tr>
+<tr><td>Device</td><td colspan="2">phone 71%, computer 29% (both surveys)</td></tr>
+</tbody></table>
+</div>
+
+<h3>2.5&nbsp;&nbsp;Analysis</h3>
+<p><i>k</i> is strongly skewed and censored at both ends of the range, so every test is rank-based. We used Wilcoxon signed-rank for within-person comparisons, Friedman with Kendall's W across the four contexts, Mann–Whitney U between random groups, Spearman ρ for associations, and exact McNemar for flip direction. Pairwise tests were Holm-corrected, and medians come with 95% bootstrap intervals. A regression of log <i>k</i> on context, version, order and all controls used 984 observations with standard errors clustered by person. The analysis scripts are in the project repository.</p>
+
+<h2>3&nbsp;&nbsp;Results</h2>
+<h3>H1: no net pull toward "now"</h3>
+<p>On the classic pair, 41 of 123 main-survey respondents (33%) changed their answer between the near and far versions. But only 15 changed in the predicted direction (sooner when near, later when far), while 26 did the reverse (exact McNemar p = .12). In the short survey, 28% reversed, 11 in the classic direction and 7 the other way (p = .48). The titration agrees: the median β was exactly 1.0 in every context, and no context showed <i>k</i>(A) &gt; <i>k</i>(B) after Holm correction (all p ≥ .68). The smallest effect our sample could detect was d<sub>z</sub> = 0.25, so a small present bias cannot be ruled out, but a typical-sized one would have shown. <b>H1 is not supported.</b></p>
+
+<h3>Inconsistency without direction</h3>
+<p>Comparing each person's Version A and Version B prices (counting only differences larger than the titration's precision), <b>85% were inconsistent in at least one context</b>. These inconsistencies were balanced (Fig. 2). Present-biased and future-biased people were about equally common in every context, so the <i>average</i> person looks time-consistent even though most individuals are not. Health was the least stable context (36% consistent) and fines the most (70%, partly because half the sample sat at the "pay now" floor in both versions).</p>
+
+<figure>
+{{FIG2}}
+<figcaption><b>Figure 2.</b> Main survey (n = 123): share of people whose price for the same 30-day wait was higher when it started today (present-biased), higher when it started on day 30 (future-biased), or the same within measurement precision.</figcaption>
+</figure>
+
+<h3>H2: the stake changes the price</h3>
+<p>Context had a large effect on <i>k</i> (Friedman χ² = 116.4, p &lt; 10<sup>−5</sup>, W = 0.32 in Version A; χ² = 135.7, W = 0.37 in Version B). A month's wait cost the median person 2% of a fine, 19% of a money gain, 21% of a friend's money and 45% of healthy days (Fig. 3). Against the gain baseline, fines were discounted less (rank-biserial r = 0.69) and healthy days more (r = 0.55; both Holm p &lt; 10<sup>−5</sup>). Money for a friend did not differ from money for oneself (p = .80), contrary to Pronin et al. (2008). In the regression with all controls, health (+0.76 log units) and fines (−1.36) remained the largest effects (both p &lt; .001). The result held in the strict (χ² = 100.7) and sensitivity (χ² = 95.6) samples.</p>
+<p>The short survey replicated the ranking (χ² = 46.2, W = 0.24). Fines lost 1%, money 15% and a friend's money 17%, and friend vs self again did not differ (p = .70). Health changed sides: framed as days of flu, it lost only 5% and was discounted <i>less</i> than money (Holm p = .014), whereas healthy days in the main survey were discounted most. <b>H2 is supported.</b></p>
+
+<figure>
+{{FIG1}}
+<figcaption><b>Figure 3.</b> Median share of value lost to a 30-day wait starting today, with 95% bootstrap intervals. The fine and flu medians in the short survey sit at the floor: 71% and 69% of people always chose to get the cost over with immediately.</figcaption>
+</figure>
+
+<h3>H3: patience is a state, not a trait</h3>
+<p>If patience were one trait, people's <i>k</i> would correlate across contexts. Only money for oneself and money for a friend did (ρ = 0.77; 0.63 in Version B; 0.60 in the short survey). These are effectively the same money decision. All other pairs were weak (ρ = 0.16–0.34; Fig. 4). They were also well below the correlation of the same context with itself across Versions A and B (ρ = 0.44–0.74), so the low cross-context values are not just measurement noise. Knowing how patient someone is with money says little about how they treat a fine or their health. <b>H3 (trait) is not supported. Patience behaves as a state.</b></p>
+
+<figure class="fig3wrap">
+{{FIG3}}
+<figcaption><b>Figure 4.</b> Spearman ρ between a person's <i>k</i> in two contexts (main survey, Version A). 0 = no link, 1 = identical ranking.</figcaption>
+</figure>
+
+<h3>H4: the hidden-zero nudge had no effect</h3>
+<p>The median value lost was 13% with the standard wording and 14% with the zeros written out (Mann–Whitney p = .62; strict sample p = .86). <b>H4 is not supported.</b> Our version showed both options on one screen, six times in a row, so the zero was arguably already obvious.</p>
+
+<h3>H5: an irrelevant number moved the price</h3>
+<p>Two-thirds (66%) said yes to ₹15,000 and 8% to ₹5,200, so people did read the anchor. Afterwards, the minimum amount demanded for waiting a year was ₹10,000 (IQR 7,625–20,000) after the high anchor and ₹8,000 (IQR 6,000–14,000) after the low one (one-sided Mann–Whitney p = .027, r = 0.20; two-sided p = .054; strict sample one-sided p = .026). The direction was fixed in advance, which justifies the one-sided test. <b>H5 is supported:</b> the price of waiting is partly built on the spot from whatever number is at hand.</p>
+
+<h3>H6 and H7: weak traces of the two systems</h3>
+<p>The Type 1 score was unrelated to patience (ρ = −0.11, p = .24). Each intuitive answer raised the odds of a classic reversal by a factor of 1.63, but the interval included 1 (95% CI 0.92–2.89, p = .094). The measure had little range: 89% gave at most one intuitive answer, and the harder version-3 puzzles reached only 10 analysed people. <b>H6 is not supported.</b></p>
+<p>Taps on "today" questions were not slower (median 1,628 ms vs 1,706 ms without "today", p = .23). Taps were slower the closer an offer was to the person's own switch point (coefficient −1.59 log-ms per unit of relative distance, p &lt; .0001, with question position and person fixed effects). This control is needed because the first offer of each task is both the farthest and the slowest. Deliberation time therefore tracks how close the decision is, not whether "now" is on the table. <b>H7 is not supported as stated.</b></p>
+
+<div class="block">
+<div class="tcap"><b>Table 3.</b> Summary of results (main survey unless stated).</div>
+<table>
+<thead><tr><th>#</th><th>Key result</th><th>Verdict</th></tr></thead>
+<tbody>
+<tr><td>H1</td><td>Flips 15 toward now vs 26 toward later; median β = 1.0 in all contexts</td><td>Not supported</td></tr>
+<tr><td>H2</td><td>Value lost: fine 2%, gain 19%, friend 21%, health 45%; replicated</td><td class="ok">Supported</td></tr>
+<tr><td>H3</td><td>Cross-context ρ 0.16–0.34; only self–friend money 0.77</td><td>State, not trait</td></tr>
+<tr><td>H4</td><td>13% vs 14% lost, p = .62</td><td>Not supported</td></tr>
+<tr><td>H5</td><td>₹8,000 → ₹10,000, one-sided p = .027</td><td class="ok">Supported</td></tr>
+<tr><td>H6</td><td>ρ = −0.11; flip odds ×1.63, p = .094</td><td>Not supported</td></tr>
+<tr><td>H7</td><td>"Today" not slower (p = .23); close calls slower (p &lt; .0001)</td><td>Not as stated</td></tr>
+</tbody></table>
+</div>
+
+<p class="small"><b>Controls.</b> People who trusted future payments more were slightly more patient (−0.14 log <i>k</i> per point, p = .083). Those who had recently taken a similar survey were more patient (−0.60, p = .031). Neither changed the context effects.</p>
+
+<h2>4&nbsp;&nbsp;Discussion</h2>
+<p><b>Why no pull toward the present?</b> Three features of the design remove what usually drives present bias. Every payment was described as guaranteed. Andreoni and Sprenger (2012) and Halevy (2008) show that much of the apparent bias toward "now" is a premium for certainty, which disappears when the later payment is as safe as the immediate one. The trust result above points the same way. The rates were also generous (10% for one extra day in the short survey, 10% for one extra week in the main one), and the same person answered both members of a pair within minutes, which invites consistency. The reversals that did occur went both ways, which looks more like noise than a systematic bias. Our results match studies that hold certainty constant, not the classic reversal studies.</p>
+<p><b>Why does the stake matter so much?</b> Each context brings its own feeling. A fine still pending in a month means a month of dread, so people pay now (Loewenstein, 1987; Thaler, 1981). Relief from headaches feels urgent, and days of health cannot be saved, invested or lent like money (Chapman, 1996). The flu result shows that the <i>sign</i> of the outcome matters more than its domain. A good health outcome is wanted now and a bad one is wanted over with, which is the same pattern as money gains versus fines. A friend's money was treated exactly like one's own, perhaps because a close friend is psychologically close to oneself.</p>
+<p><b>A constructed price.</b> H3 and H5 point to the same conclusion. People do not carry one discount rate into every decision. They build a price for each question from the stake in front of them, and from an irrelevant number when there is nothing better to go on. This also explains the large but directionless inconsistency: each rebuild adds a little noise, in both directions.</p>
+<p><b>Against the proposal.</b> The proposal predicted fines and health would be discounted less than gains. That held for fines in both surveys and for health in the proposal's own flu wording, but not for healthy days. It expected a third or more to show the classic reversal; we saw 12–17%. It made no firm prediction about the friend, which turned out to equal the self.</p>
+<p><b>Limitations.</b> The sample is young (median age 20; 86% aged 18–24) and mostly students. Money was largely hypothetical apart from the lottery payout. Half the sample hit the floor for fines, so fines are probably discounted even less than we can show. Two time frames cannot separate hyperbolic discounting from β–δ. The Type 1 and decision-time measures were too coarse to test the dual-system account fairly. A phone survey is not a scanner.</p>
+
+<h2>5&nbsp;&nbsp;Observations to test further</h2>
+<p>H1–H7 came from the literature. The data raised four further ideas that this study was not designed to test:</p>
+<ul>
+<li><b>H8: sign beats domain.</b> Losses are discounted less than matching gains whatever the topic. We saw money gain 19% vs fine 2% within people, and healthy days 45% vs flu 5% across the two surveys (Mann–Whitney p &lt; 10<sup>−9</sup>, but different people and instruments). Test: gain and loss versions of each topic for the same people.</li>
+<li><b>H9: strangers get more patience than friends.</b> A close friend may feel like oneself, as the ρ = 0.77 and the identical prices suggest. Test: add a stranger.</li>
+<li><b>H10: question position, not "today", drives flips.</b> Among the 22 people who reversed in the randomised-order rows, 16 took the sooner option on whichever pair they saw first (p = .052). Test: randomise order for everyone, or ask the two pairs on different days.</li>
+<li><b>H11: intuitive thinkers are inconsistent, not impatient.</b> The Type 1 score was unrelated to <i>k</i> but tended to predict flips (odds ×1.63). Test: harder puzzles and repeated identical choices.</li>
+</ul>
+
+<h2>6&nbsp;&nbsp;Conclusion</h2>
+<p>The time-discounting paradox did not appear as a systematic bias toward the present when later payments were certain. Time valuation was still very inconsistent, in a different way: the same 30-day wait cost 2% of a fine and 45% of healthy days, people's patience in one context barely predicted it in another, and a meaningless number shifted the price of waiting by ₹2,000. Patience looks less like a fixed trait than a price rebuilt for each decision.</p>
+
+<h2>Data and materials</h2>
+<p class="small">Cleaned responses (one row per response; UPI IDs, free-text comments and device strings removed; columns <code>status</code> and <code>exclusion_reason</code> mark the 188 analysed rows): {{DATALINK}}. Surveys, analysis code and column definitions: <a href="https://github.com/SiddGud/now-or-later">github.com/SiddGud/now-or-later</a>.</p>
+
+<h2>References</h2>
+<div class="refs">
+<p>Ainslie, G. (1975). Specious reward. <i>Psychological Bulletin, 82</i>(4), 463–496.</p>
+<p>Andreoni, J., &amp; Sprenger, C. (2012). Risk preferences are not time preferences. <i>American Economic Review, 102</i>(7), 3357–3376.</p>
+<p>Chapman, G. B. (1996). Temporal discounting and utility for health and money. <i>JEP: Learning, Memory, and Cognition, 22</i>(3), 771–791.</p>
+<p>Du, W., Green, L., &amp; Myerson, J. (2002). Cross-cultural comparisons of discounting delayed and probabilistic rewards. <i>Psychological Record, 52</i>, 479–492.</p>
+<p>Frederick, S. (2005). Cognitive reflection and decision making. <i>Journal of Economic Perspectives, 19</i>(4), 25–42.</p>
+<p>Halevy, Y. (2008). Strotz meets Allais: Diminishing impatience and the certainty effect. <i>American Economic Review, 98</i>(3), 1145–1162.</p>
+<p>Keren, G., &amp; Roelofsma, P. (1995). Immediacy and certainty in intertemporal choice. <i>OBHDP, 63</i>(3), 287–297.</p>
+<p>Laibson, D. (1997). Golden eggs and hyperbolic discounting. <i>Quarterly Journal of Economics, 112</i>(2), 443–477.</p>
+<p>Loewenstein, G. (1987). Anticipation and the valuation of delayed consumption. <i>Economic Journal, 97</i>, 666–684.</p>
+<p>Magen, E., Dweck, C. S., &amp; Gross, J. J. (2008). The hidden-zero effect. <i>Psychological Science, 19</i>(7), 648–649.</p>
+<p>Mazur, J. E. (1987). An adjusting procedure for studying delayed reinforcement. In <i>Quantitative Analyses of Behavior, Vol. 5</i> (pp. 55–73). Erlbaum.</p>
+<p>McClure, S. M., Laibson, D. I., Loewenstein, G., &amp; Cohen, J. D. (2004). Separate neural systems value immediate and delayed monetary rewards. <i>Science, 306</i>, 503–507.</p>
+<p>Pronin, E., Olivola, C. Y., &amp; Kennedy, K. A. (2008). Doing unto future selves as you would do unto others. <i>PSPB, 34</i>(2), 224–236.</p>
+<p>Samuelson, P. A. (1937). A note on measurement of utility. <i>Review of Economic Studies, 4</i>(2), 155–161.</p>
+<p>Thaler, R. (1981). Some empirical evidence on dynamic inconsistency. <i>Economics Letters, 8</i>(3), 201–207.</p>
+<p>Toplak, M. E., West, R. F., &amp; Stanovich, K. E. (2014). Assessing miserly information processing: An expansion of the Cognitive Reflection Test. <i>Thinking &amp; Reasoning, 20</i>(2), 147–168.</p>
+<p>Tversky, A., &amp; Kahneman, D. (1974). Judgment under uncertainty: Heuristics and biases. <i>Science, 185</i>, 1124–1131.</p>
+</div>
+
+</div>
+</body>
+</html>

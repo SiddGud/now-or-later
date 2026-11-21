@@ -69,13 +69,14 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     os.makedirs(OUT, exist_ok=True)
     df = pd.read_csv([a for a in sys.argv[1:] if not a.startswith("--")][0])
-    # The Sheet's id header was once cleared: old ids sit under a blank header, new ones in an id column at the end
-    if " " in df.columns:
+    # The Sheet's id header went blank: early rows keep their id in an unnamed first column
+    first = df.columns[0]
+    if first != "id" and (str(first).strip() == "" or str(first).startswith("Unnamed")):
         if "id" in df.columns:
-            df["id"] = df[" "].fillna(df["id"])
+            df["id"] = df["id"].fillna(df[first])
         else:
-            df["id"] = df[" "]
-        df = df.drop(columns=[" "])
+            df["id"] = df[first]
+        df = df.drop(columns=[first])
     if "survey" not in df.columns:
         say("No proposal-survey rows yet.")
         sys.exit(1)
@@ -122,6 +123,12 @@ def main():
         sys.exit(1)
     for c in CONTEXTS:
         df["A_%s_k" % c] = pd.to_numeric(df["A_%s_k" % c], errors="coerce")
+    # The app's floor flag misses health: with 1-day steps the final interval is wider than its tolerance.
+    # Recompute: pinned at the bottom when the switch point is within one step of the sooner value.
+    for c in CONTEXTS:
+        ind = pd.to_numeric(df["A_%s_ind" % c], errors="coerce")
+        step = 1 if c == "health" else 5
+        df.loc[ind <= V[c] + step, "A_%s_censored" % c] = "low"
     say("Censoring per context: %s" % {c: df["A_%s_censored" % c].value_counts().to_dict() for c in CONTEXTS})
 
     # Discounting per context

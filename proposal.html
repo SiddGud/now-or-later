@@ -412,6 +412,8 @@ function startAdaptive(t) {
     // 'high': pinned at the top, true k is at least this value (gain: never chose later; loss: always postponed).
     // 'low': pinned at the bottom (gain: always chose later; loss: always paid now).
     var tol = (t.hi - t.lo) / Math.pow(2, TRIALS - 1);
+    // With whole-day or ₹5 steps the last interval can never be narrower than one step
+    if (tol < t.step) { tol = t.step; }
     var censored = 'no';
     if (hi === t.hi && lo >= t.hi - tol) { censored = 'high'; }
     if (lo === t.lo && hi <= t.lo + tol) { censored = 'low'; }

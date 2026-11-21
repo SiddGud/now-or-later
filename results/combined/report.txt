@@ -1,0 +1,61 @@
+== 1. Samples ==
+Main app: {'after_dedupe_and_tests': 142, 'careless_dropped': 19, 'analysed': 123, 'strict': 99}
+  versions: {'v1': 96, 'v2': 17, 'v3': 10}
+  who: {'IIIT-H student': 70, 'Student, other college': 47, 'Working professional': 6} | age median 20
+Proposal survey: {'responses': 73, 'dropped_rushed': 8, 'analysed': 65}
+  year: {'3rd year': 22, '2nd year': 13, '4th year': 11, '5th year / PG': 10, 'Not a student': 6, '1st year': 3}
+  field: {'Humanities / social sciences': 19, 'Other': 15, 'CSE / IT': 12, 'ECE / EE': 8, 'Other engineering': 7, 'Science': 4}
+  age median 21 (range 18-48)
+
+== 2. k per context (today vs 30 days), median with 95% bootstrap CI ==
+   study context   n  median_k   ci_lo   ci_hi  pct_floor  pct_ceiling  annual_rate_pct
+    main    gain 123   0.00767 0.00567 0.01517   17.07317      9.75610          279.955
+    main    loss 123   0.00083 0.00083 0.00250   52.03252      4.87805           30.295
+    main  health 123   0.02750 0.01917 0.03417   12.19512     23.57724         1003.750
+    main  friend 123   0.00883 0.00567 0.01650   21.13821     11.38211          322.295
+proposal    gain  65   0.00600 0.00217 0.01317   29.23077     15.38462          219.000
+proposal    loss  65   0.00050 0.00050 0.00050   70.76923      3.07692           18.250
+proposal  health  65   0.00167 0.00167 0.00167   69.23077      4.61538           60.955
+proposal  friend  65   0.00683 0.00217 0.01483   30.76923     10.76923          249.295
+annual_rate_pct = simple hyperbolic k x 365, for intuition only.
+
+== 3. Sign effect across domains ==
+main: money gain k > fine k for 63% of people; Wilcoxon p=6.8e-09, r_rb=0.69 (n=123)
+proposal: money gain k > fine k for 66% of people; Wilcoxon p=7.3e-07, r_rb=0.82 (n=65)
+health gain (headache-free days, main, n=123) median k=0.0275 vs health loss (flu days, proposal, n=65) median k=0.0017; Mann-Whitney p=3.1e-11, r_rb=0.59
+  Between-subjects and different instruments (sooner 20 vs 10 days), so read as convergent, not causal.
+Always 'get it over with' (k at floor): fine 52% (main), 71% (proposal); flu 69% (proposal)
+
+== 4. Present bias: block A (today vs 30 days) against block B (30 vs 60 days) ==
+context   n  mean_logk_diff     dz  dz_lo  dz_hi  pct_A_gt_B  pct_equal  pct_A_lt_B
+   gain 123          -0.152 -0.143 -0.310  0.032      29.268     39.024      31.707
+   loss 123           0.182  0.117 -0.062  0.301      27.642     52.846      19.512
+ health 123          -0.219 -0.224 -0.385 -0.065      29.268     29.268      41.463
+ friend 123          -0.107 -0.079 -0.255  0.102      30.081     39.024      30.894
+Smallest detectable effect at n=123 (80% power, alpha .05): dz = 0.25 (Wilcoxon needs about 5% more people)
+
+== 5. Classic reversal pair: delay or question position? ==
+main (n=123): classic 15 (12.2%, 95% CI 7.0-19.3), reverse 26 (21.1%)
+proposal (n=65): classic 11 (16.9%, 95% CI 8.8-28.3), reverse 7 (10.8%)
+Randomised rows: 75 ({('main', 'farFirst'): 2, ('main', 'nearFirst'): 8, ('proposal', 'farFirst'): 30, ('proposal', 'nearFirst'): 35})
+  farFirst: classic 3, reverse 5
+  nearFirst: classic 11, reverse 3
+Of 22 people who changed their answer: 16 took the sooner option on the FIRST pair they saw (p=0.052 vs 50%); 14 took it on the NEAR pair, as present bias predicts (p=0.286)
+GEE logistic, P(choose later): near pair OR=0.73 [0.39, 1.37] p=0.326; asked first OR=0.52 [0.28, 0.98] p=0.044
+
+== 6. Trait or state? Spearman of k across contexts (95% bootstrap CI) ==
+   study          pair  rho    lo   hi
+    main     gain-loss 0.23  0.06 0.40
+    main   gain-health 0.34  0.16 0.51
+    main   gain-friend 0.77  0.64 0.88
+    main   loss-health 0.16 -0.04 0.34
+    main   loss-friend 0.20  0.01 0.39
+    main health-friend 0.34  0.16 0.51
+proposal     gain-loss 0.25 -0.00 0.49
+proposal   gain-health 0.13 -0.10 0.36
+proposal   gain-friend 0.60  0.36 0.78
+proposal   loss-health 0.13 -0.11 0.39
+proposal   loss-friend 0.15 -0.10 0.39
+proposal health-friend 0.13 -0.12 0.38
+Same context, block A vs block B (main): {'gain': np.float64(0.74), 'loss': np.float64(0.44), 'health': np.float64(0.61), 'friend': np.float64(0.6)}
+Cross-context correlations well below these within-context ones point to context-specific (state) discounting.

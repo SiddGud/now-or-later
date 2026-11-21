@@ -2,7 +2,7 @@
 
 ## 1. Backend (Google Sheet)
 1. Create a new Google Sheet named "Now or Later responses".
-2. Extensions -> Apps Script. Delete the sample code and paste all of Code.gs. Save.
+2. Extensions -> Apps Script. Delete the sample code and paste all of backend/Code.gs. Save.
 3. Deploy -> New deployment -> gear icon -> Web app.
    - Execute as: Me
    - Who has access: Anyone

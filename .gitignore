@@ -7,3 +7,10 @@ __pycache__/
 
 # Summary tables in results/ hold no personal data
 !results/**/*.csv
+# Cleaned public data (no UPI IDs, no comments), made by analysis/report_assets.py
+!data/now_or_later_responses_clean.csv
+!data/now_or_later_responses_summary.csv
+
+# Local editor and agent settings
+.agent/
+report/source/report.html

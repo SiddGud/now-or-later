@@ -42,6 +42,9 @@ INK2 = "#52514e"
 SURFACE = "#fcfcfb"
 INTUITIVE_P5 = "Priya has a savings account and invests in a SIP every month"
 
+# Responses from people who know the study (team members, helpers); excluded from every analysis
+INSIDER_IDS = ["zvf0fepg"]
+
 report_lines = []
 
 
@@ -85,15 +88,23 @@ def style_axes(ax):
 # ---------------------------------------------------------------- load
 
 
-def load(path):
-    df = pd.read_csv(path)
-    # The Sheet's id header was once cleared: old ids sit under a blank header, new ones in an id column at the end
-    if " " in df.columns:
+def repair_ids(df):
+    """The Sheet's id header (cell A1) went blank, so early rows keep their id in an unnamed
+    first column and later rows in the 'id' column. Merge them and drop the setup row."""
+    first = df.columns[0]
+    if first != "id" and (str(first).strip() == "" or str(first).startswith("Unnamed")):
         if "id" in df.columns:
-            df["id"] = df[" "].fillna(df["id"])
+            df["id"] = df["id"].fillna(df[first])
         else:
-            df["id"] = df[" "]
-        df = df.drop(columns=[" "])
+            df["id"] = df[first]
+        df = df.drop(columns=[first])
+    df = df[df["id"].astype(str) != "setupcheck"]
+    # Insider plays (team members or helpers who know the hypotheses) are not participants
+    return df[~df["id"].isin(INSIDER_IDS)]
+
+
+def load(path):
+    df = repair_ids(pd.read_csv(path))
     say("Rows in file: %d" % len(df))
     # Retries can create duplicate rows; keep the first arrival of each id
     if "receivedAt" in df.columns:
@@ -399,7 +410,7 @@ def h7(df):
     ab = ab[ab["pos"] > 0]
     span = ab["ctx"].map({"gain": 750, "loss": 750, "friend": 750, "health": 30})
     # Health runs to 80 days in v2
-    span = span.where(~((ab["ctx"] == "health") & (ab["version"] == "v2")), 60)
+    span = span.where(~((ab["ctx"] == "health") & (ab["version"] != "v1")), 60)
     ab = ab.assign(dist=(ab["offer"] - ab["ind"]).abs() / span, logrt=np.log(ab["rt"]))
     ab = ab.dropna(subset=["dist"])
     rhos = []
@@ -412,6 +423,12 @@ def h7(df):
         say("Within-person Spearman(distance from switch point, log RT): median rho=%.3f, Wilcoxon vs 0 p=%.5f (n=%d)"
             % (rhos.median(), w3.pvalue, len(rhos)))
         say("Expected: negative rho (slower near the switch point).")
+    # Offers near the switch point come late in each task, when people have warmed up.
+    # Person fixed effects plus question position separate the two.
+    m = smf.ols("logrt ~ dist + C(pos) + C(id)", data=ab).fit(cov_type="cluster", cov_kwds={"groups": pd.factorize(ab["id"])[0]})
+    say("log RT ~ distance + position + person FE: distance coef=%.3f (SE %.3f, p=%.4f); position 5 vs 1 coef=%.3f"
+        % (m.params["dist"], m.bse["dist"], m.pvalues["dist"], m.params.get("C(pos)[T.5]", m.params.get("C(pos)[T.4]", np.nan))))
+    say("Negative distance coef = slower near the switch point, after removing the warm-up trend.")
     bins = pd.cut(ab["dist"], [0, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0], include_lowest=True)
     curve = ab.groupby(bins, observed=True)["rt"].median()
     say("Median RT by distance from switch point:")
@@ -421,7 +438,7 @@ def h7(df):
 
 
 def regression(df):
-    say("\n== Regression: log k ~ context + frame + type1Score + trust + stress + spending + priorKnowledge + otherSurvey + order ==")
+    say("\n== Regression: log k ~ context + frame + type1Score + trust + stress + spending + priorKnowledge + otherSurvey + order (+ version when pooled) ==")
     rows = []
     for _, r in df.iterrows():
         for c in CONTEXTS:
@@ -431,10 +448,14 @@ def regression(df):
                     rows.append({"id": r["id"], "logk": np.log(k), "context": c, "frame": f,
                                  "type1Score": r["type1Score"], "trust": r["trust"], "stress": r["stress"],
                                  "spending": r["spending"], "priorKnowledge": r["priorKnowledge"],
-                                 "otherSurvey": r["otherSurvey"], "order": r["order"]})
+                                 "otherSurvey": r["otherSurvey"], "order": r["order"],
+                                 "version": r["version"]})
     long = pd.DataFrame(rows).dropna()
     formula = ("logk ~ C(context, Treatment('gain')) + C(frame, Treatment('B')) + type1Score + trust + stress"
                " + C(spending) + C(priorKnowledge) + C(otherSurvey) + C(order)")
+    # Question version differs in steps and health range, so pool with version as a covariate
+    if long["version"].nunique() > 1:
+        formula += " + C(version)"
     m = smf.ols(formula, data=long).fit(cov_type="cluster", cov_kwds={"groups": pd.factorize(long["id"])[0]})
     say("OLS, %d observations from %d people, SEs clustered by person" % (len(long), long["id"].nunique()))
     say(m.summary().tables[1].as_text())

@@ -1,0 +1,234 @@
+{
+ "unique_real": 215,
+ "unique_main": 142,
+ "unique_short": 73,
+ "public_rows": 215,
+ "public_analysed": 188,
+ "excluded_reasons": {
+  "main (index.html) | careless answering (3+ of 5 warning signs)": 19,
+  "short (proposal.html) | rushed (over 25% of taps under 400 ms)": 8
+ },
+ "rows_in_sheet": 218,
+ "dates": [
+  "2026-11-05T22:15:40.353Z",
+  "2026-11-15T20:02:01.124Z"
+ ],
+ "age_all": {
+  "median": 20.0,
+  "min": 18.0,
+  "max": 48.0,
+  "share_18_24": 0.8563829787234043
+ },
+ "main_describes": {
+  "IIIT-H student": 70,
+  "Student, other college": 47,
+  "Working professional": 6
+ },
+ "main_spending": {
+  "₹3k–6k": 44,
+  "Under ₹3k": 33,
+  "₹6k–10k": 28,
+  "Over ₹10k": 13,
+  "Prefer not to say": 4,
+  "Not given": 1
+ },
+ "main_age": [
+  20.0,
+  18.0,
+  38.0
+ ],
+ "short_age": [
+  21.0,
+  18.0,
+  48.0
+ ],
+ "short_year": {
+  "3rd year": 22,
+  "2nd year": 13,
+  "4th year": 11,
+  "5th year / PG": 10,
+  "Not a student": 6,
+  "1st year": 3
+ },
+ "short_field": {
+  "Humanities / social sciences": 19,
+  "Other": 15,
+  "CSE / IT": 12,
+  "ECE / EE": 8,
+  "Other engineering": 7,
+  "Science": 4
+ },
+ "device": {
+  "phone": 0.707,
+  "computer": 0.293
+ },
+ "trust_median": 3.0,
+ "stress_median": 3.0,
+ "prior": {
+  "No": 61,
+  "Heard of it": 49,
+  "Yes, in detail": 13
+ },
+ "otherSurvey": {
+  "No": 105,
+  "Yes": 13,
+  "Not sure": 5
+ },
+ "minutes_main": 8.483333333333333,
+ "minutes_short": 2.316666666666667,
+ "versions": {
+  "v1": 96,
+  "v2": 17,
+  "v3": 10
+ },
+ "fig1": [
+  {
+   "study": "main",
+   "ctx": "gain",
+   "med": 18.71,
+   "lo": 14.54,
+   "hi": 31.28,
+   "floor": 0.17
+  },
+  {
+   "study": "main",
+   "ctx": "loss",
+   "med": 2.43,
+   "lo": 2.43,
+   "hi": 6.98,
+   "floor": 0.52
+  },
+  {
+   "study": "main",
+   "ctx": "health",
+   "med": 45.21,
+   "lo": 36.51,
+   "hi": 50.62,
+   "floor": 0.12
+  },
+  {
+   "study": "main",
+   "ctx": "friend",
+   "med": 20.94,
+   "lo": 14.54,
+   "hi": 33.11,
+   "floor": 0.21
+  },
+  {
+   "study": "short",
+   "ctx": "gain",
+   "med": 15.25,
+   "lo": 6.11,
+   "hi": 28.32,
+   "floor": 0.29
+  },
+  {
+   "study": "short",
+   "ctx": "loss",
+   "med": 1.48,
+   "lo": 1.48,
+   "hi": 1.48,
+   "floor": 0.71
+  },
+  {
+   "study": "short",
+   "ctx": "health",
+   "med": 4.77,
+   "lo": 4.77,
+   "hi": 4.77,
+   "floor": 0.69
+  },
+  {
+   "study": "short",
+   "ctx": "friend",
+   "med": 17.01,
+   "lo": 6.11,
+   "hi": 30.79,
+   "floor": 0.31
+  }
+ ],
+ "inconsistency": [
+  {
+   "context": "gain",
+   "n": 123,
+   "present_biased_pct": 23.6,
+   "future_biased_pct": 24.4,
+   "consistent_pct": 52.0,
+   "inconsistent_pct": 48.0
+  },
+  {
+   "context": "loss",
+   "n": 123,
+   "present_biased_pct": 18.7,
+   "future_biased_pct": 11.4,
+   "consistent_pct": 69.9,
+   "inconsistent_pct": 30.1
+  },
+  {
+   "context": "health",
+   "n": 123,
+   "present_biased_pct": 26.8,
+   "future_biased_pct": 37.4,
+   "consistent_pct": 35.8,
+   "inconsistent_pct": 64.2
+  },
+  {
+   "context": "friend",
+   "n": 123,
+   "present_biased_pct": 21.1,
+   "future_biased_pct": 22.8,
+   "consistent_pct": 56.1,
+   "inconsistent_pct": 43.9
+  }
+ ],
+ "rho_main": [
+  [
+   1.0,
+   0.23,
+   0.34,
+   0.77
+  ],
+  [
+   0.23,
+   1.0,
+   0.16,
+   0.2
+  ],
+  [
+   0.34,
+   0.16,
+   1.0,
+   0.34
+  ],
+  [
+   0.77,
+   0.2,
+   0.34,
+   1.0
+  ]
+ ],
+ "h5": {
+  "high_med": 10000.0,
+  "low_med": 8000.0,
+  "n_high": 70,
+  "n_low": 53,
+  "p_one": 0.02689790100532294,
+  "p_two": 0.05379580201064588,
+  "q25_hi": 7625.0,
+  "q75_hi": 20000.0,
+  "q25_lo": 6000.0,
+  "q75_lo": 14000.0
+ },
+ "h4": {
+  "standard": 12.564483693276209,
+  "hiddenZero": 13.606911447084235
+ },
+ "h6_correct_share": 0.3170731707317073,
+ "type1_dist": {
+  "0.0": 39,
+  "1.0": 71,
+  "2.0": 6,
+  "3.0": 5,
+  "4.0": 2
+ }
+}
